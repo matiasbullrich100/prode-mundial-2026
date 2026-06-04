@@ -321,38 +321,6 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
 
 </div>
 
-<!-- WELCOME MODAL -->
-<div id="welcome-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center;padding:1.25rem">
-  <div style="background:#fff;border-radius:16px;max-width:400px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)">
-    <div style="background:#001a4d;padding:1.25rem;text-align:center">
-      <div style="font-size:28px;margin-bottom:6px">⚽</div>
-      <h2 style="font-size:18px;font-weight:600;color:#fff;margin-bottom:4px">Bienvenido al Prode 2026</h2>
-      <p style="font-size:12px;color:#a0b8f0">FIFA World Cup · USA · Canadá · México</p>
-    </div>
-    <div style="padding:1.25rem">
-      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #f0f0f0">
-        <div style="font-size:22px;width:32px;text-align:center;flex-shrink:0">🎯</div>
-        <div style="font-size:13px;color:#111;line-height:1.5"><strong style="color:#001a4d;display:block;margin-bottom:3px">Sistema de puntos</strong>Acertar ganador, perdedor o empate: <strong>2 puntos</strong>. Si además acertás el resultado exacto: <strong>+2 puntos más</strong> (máximo 4 pts por partido).</div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #f0f0f0">
-        <div style="font-size:22px;width:32px;text-align:center;flex-shrink:0">📝</div>
-        <div style="font-size:13px;color:#111;line-height:1.5"><strong style="color:#001a4d;display:block;margin-bottom:3px">Carga parcial o total</strong>Podés cargar tus pronósticos de a poco. Guardá cuando quieras y seguí después.</div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #f0f0f0">
-        <div style="font-size:22px;width:32px;text-align:center;flex-shrink:0">✏️</div>
-        <div style="font-size:13px;color:#111;line-height:1.5"><strong style="color:#001a4d;display:block;margin-bottom:3px">Modificaciones</strong>Podés cambiar tus pronósticos todas las veces que quieras hasta las <strong>23:59 hs del día anterior</strong> al inicio de cada fase.</div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <div style="font-size:22px;width:32px;text-align:center;flex-shrink:0">🏆</div>
-        <div style="font-size:13px;color:#111;line-height:1.5"><strong style="color:#001a4d;display:block;margin-bottom:3px">Fases</strong>Grupos → Octavos → Cuartos → Semis → Final. Aunque no aciertes en grupos, seguís sumando en las fases siguientes.</div>
-      </div>
-    </div>
-    <div style="padding:1rem 1.25rem;border-top:1px solid #f0f0f0">
-      <button onclick="closeWelcome()" style="width:100%;padding:13px;background:#001a4d;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit">¡Entendido, a jugar!</button>
-    </div>
-  </div>
-</div>
-
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1121,5 +1089,36 @@ if('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 </script>
+<!-- WELCOME MODAL - outside app container -->
+<div id="welcome-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:99999;align-items:flex-start;justify-content:center;padding:1.25rem;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;max-width:400px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);margin:auto;margin-top:2rem;margin-bottom:2rem">
+    <div style="background:#001a4d;padding:1.5rem;text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">⚽</div>
+      <div style="font-size:19px;font-weight:700;color:#fff;margin-bottom:4px">Bienvenido al Prode 2026</div>
+      <div style="font-size:12px;color:#a0b8f0">FIFA World Cup · USA · Canadá · México</div>
+    </div>
+    <div style="padding:1.25rem;background:#fff">
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee">
+        <div style="font-size:24px;width:36px;text-align:center;flex-shrink:0;margin-top:2px">🎯</div>
+        <div style="font-size:14px;color:#222;line-height:1.6"><div style="font-weight:700;color:#001a4d;margin-bottom:4px">Sistema de puntos</div>Acertar ganador, perdedor o empate: <b>2 puntos</b>. Si además acertás el resultado exacto: <b>+2 puntos</b> (máximo 4 pts por partido).</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee">
+        <div style="font-size:24px;width:36px;text-align:center;flex-shrink:0;margin-top:2px">📝</div>
+        <div style="font-size:14px;color:#222;line-height:1.6"><div style="font-weight:700;color:#001a4d;margin-bottom:4px">Carga parcial o total</div>Podés cargar tus pronósticos de a poco. Guardá cuando quieras y seguí completando después.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee">
+        <div style="font-size:24px;width:36px;text-align:center;flex-shrink:0;margin-top:2px">✏️</div>
+        <div style="font-size:14px;color:#222;line-height:1.6"><div style="font-weight:700;color:#001a4d;margin-bottom:4px">Modificaciones</div>Podés cambiar tus pronósticos todas las veces que quieras hasta las <b>23:59 hs del día anterior</b> al inicio de cada fase.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:24px;width:36px;text-align:center;flex-shrink:0;margin-top:2px">🏆</div>
+        <div style="font-size:14px;color:#222;line-height:1.6"><div style="font-weight:700;color:#001a4d;margin-bottom:4px">Fases</div>Grupos → Octavos → Cuartos → Semis → Final. Aunque no aciertes en grupos, seguís sumando en las siguientes fases.</div>
+      </div>
+    </div>
+    <div style="padding:1rem 1.25rem;background:#fff;border-top:1px solid #eee">
+      <button onclick="closeWelcome()" style="width:100%;padding:14px;background:#001a4d;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.3px">¡Entendido, a jugar! 🚀</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
