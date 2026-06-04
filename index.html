@@ -854,10 +854,8 @@ window.togglePin = (which) => {
         <div class="fg"><label>Email</label><input type="email" id="in-email" placeholder="vos@email.com" autocomplete="email"></div>
         <div class="fg"><label>PIN de 4 dígitos</label>
           <div class="pin-row">
-            <input type="password" inputmode="numeric" maxlength="1" id="pi1" oninput="pn(this,'pi2')" onkeydown="pb(event,this,null)">
-            <input type="password" inputmode="numeric" maxlength="1" id="pi2" oninput="pn(this,'pi3')" onkeydown="pb(event,this,'pi1')">
-            <input type="password" inputmode="numeric" maxlength="1" id="pi3" oninput="pn(this,'pi4')" onkeydown="pb(event,this,'pi2')">
-            <input type="password" inputmode="numeric" maxlength="1" id="pi4" oninput="pn(this,null)" onkeydown="pb(event,this,'pi3')">
+            <input type="password" inputmode="numeric" maxlength="4" id="pin-login" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center">
+            <button type="button" id="eye-pi" onclick="togglePin('login')" style="width:48px;height:48px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;color:#6b7280;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           </div>
         </div>
         <button class="auth-btn" onclick="doLogin()">
@@ -870,10 +868,8 @@ window.togglePin = (which) => {
         <div class="fg"><label>Apodo (se muestra en el ranking)</label><input type="text" id="up-nick" placeholder="ej: El Tano" maxlength="20"></div>
         <div class="fg"><label>PIN de 4 dígitos</label>
           <div class="pin-row">
-            <input type="password" inputmode="numeric" maxlength="1" id="pr1" oninput="pn(this,'pr2')" onkeydown="pb(event,this,null)">
-            <input type="password" inputmode="numeric" maxlength="1" id="pr2" oninput="pn(this,'pr3')" onkeydown="pb(event,this,'pr1')">
-            <input type="password" inputmode="numeric" maxlength="1" id="pr3" oninput="pn(this,'pr4')" onkeydown="pb(event,this,'pr2')">
-            <input type="password" inputmode="numeric" maxlength="1" id="pr4" oninput="pn(this,null)" onkeydown="pb(event,this,'pr3')">
+            <input type="password" inputmode="numeric" maxlength="4" id="pin-reg" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center">
+            <button type="button" id="eye-pr" onclick="togglePin('reg')" style="width:48px;height:48px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;color:#6b7280;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           </div>
         </div>
         <button class="auth-btn" onclick="doRegister()">
