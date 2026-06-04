@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#1a5c2a">
+<meta name="theme-color" content="#001a4d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Prode 2026">
@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--field:#1a5c2a;--field-dark:#143f1e;--field-light:#1e6b31;--gold:#BA7517;--silver:#888780;--bronze:#854F0B;--accent:#EF9F27}
+:root{--field:#001a4d;--field-dark:#001030;--field-light:#002266;--gold:#BA7517;--silver:#888780;--bronze:#854F0B;--accent:#d4af37}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;min-height:100vh}
 input::-ms-reveal, input::-ms-clear{display:none}
 input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-button{display:none}
@@ -25,19 +25,19 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .auth-hero{background:var(--field);padding:2.5rem 1.25rem 2rem;border-radius:16px;text-align:center;margin-bottom:1.25rem}
 .auth-ball{font-size:48px;margin-bottom:.5rem}
 .auth-title{font-size:24px;font-weight:600;color:#fff}
-.auth-title span{color:#EF9F27}
-.auth-sub{font-size:13px;color:#9FE1CB;margin-top:.25rem}
+.auth-title span{color:#d4af37}
+.auth-sub{font-size:13px;color:#a0b8f0;margin-top:.25rem}
 .auth-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1.25rem}
 .auth-tabs{display:flex;border-bottom:1px solid #e5e7eb;margin-bottom:1.25rem}
 .auth-tab{flex:1;padding:.65rem;font-size:14px;font-weight:500;color:#6b7280;background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit}
-.auth-tab.active{color:var(--field);border-bottom-color:var(--field)}
+.auth-tab.active{color:#001a4d;border-bottom-color:#001a4d}
 .fg{margin-bottom:1rem}
 .fg label{display:block;font-size:12px;color:#6b7280;margin-bottom:5px;font-weight:500}
 .fg input[type=email],.fg input[type=text]{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:#111}
-.fg input:focus{outline:none;border-color:var(--field);box-shadow:0 0 0 3px rgba(26,92,42,.1)}
+.fg input:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,77,.15)}
 .pin-row{display:flex;gap:8px;justify-content:center;align-items:center;margin:.5rem 0;flex-wrap:nowrap}
 .pin-row input{width:46px;height:50px;text-align:center;font-size:20px;font-weight:600;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;flex-shrink:0}
-.pin-row input:focus{border-color:var(--field);outline:none;box-shadow:0 0 0 3px rgba(26,92,42,.1)}
+.pin-row input:focus{border-color:#001a4d;outline:none;box-shadow:0 0 0 3px rgba(0,26,77,.15)}
 .pin-eye{width:46px;height:50px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6b7280;flex-shrink:0;padding:0}
 .pin-eye:hover{background:#f3f4f6;color:#374151}
 .auth-btn{width:100%;padding:12px;background:var(--field);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -49,20 +49,20 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .hero{background:var(--field);padding:1rem 1rem .85rem}
 .hero-top{display:flex;align-items:flex-start;justify-content:space-between}
 .hero-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:.2px}
-.hero-title span{color:#EF9F27}
-.hero-sub{font-size:11px;color:#9FE1CB;margin-top:1px}
+.hero-title span{color:#d4af37}
+.hero-sub{font-size:11px;color:#a0b8f0;margin-top:1px}
 .hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:.85rem;padding-top:.85rem;border-top:1px solid rgba(255,255,255,.15)}
 .hstat{text-align:center}
 .hstat-val{font-size:18px;font-weight:700;color:#fff}
-.hstat-lbl{font-size:10px;color:#9FE1CB;margin-top:1px;text-transform:uppercase;letter-spacing:.5px}
-.logout-btn{padding:6px 10px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:transparent;color:rgba(255,255,255,.8);cursor:pointer;font-size:13px;font-family:inherit;display:flex;align-items:center;gap:4px}
+.hstat-lbl{font-size:10px;color:#a0b8f0;margin-top:1px;text-transform:uppercase;letter-spacing:.5px}
+.logout-btn{padding:6px 10px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:transparent;color:rgba(255,255,255,.8);cursor:pointer;font-size:13px;font-family:inherit;display:flex;align-items:center;gap:4px}
 .logout-btn:hover{background:rgba(255,255,255,.1)}
 
 /* BOTTOM NAV */
 .bottom-nav{display:flex;background:var(--field-dark)}
 .bnav-btn{flex:1;padding:.7rem 0;font-size:11px;color:rgba(255,255,255,.5);background:transparent;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
 .bnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-.bnav-btn.active{color:#EF9F27}
+.bnav-btn.active{color:#d4af37}
 
 /* CONTENT */
 .content{padding:1rem}
@@ -71,18 +71,18 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .phase-strip{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.25rem;margin-bottom:1rem;scrollbar-width:none}
 .phase-strip::-webkit-scrollbar{display:none}
 .phase-pill{white-space:nowrap;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #d1d5db;color:#6b7280;background:#fff;cursor:pointer;font-family:inherit;letter-spacing:.2px}
-.phase-pill.active{background:var(--field);color:#fff;border-color:var(--field)}
+.phase-pill.active{background:var(--field);color:#fff;border-color:#001a4d}
 
 /* NOTICES */
 .notice{padding:.65rem .85rem;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;margin-bottom:.85rem}
-.notice.green{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.notice.green{background:#e8f0fe;color:#0c2d6e;border:1px solid #b8ceff}
 .notice.amber{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
 .notice.red{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
 .notice svg{width:15px;height:15px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* MATCH CARDS */
 .match-card{border:1px solid #e5e7eb;border-radius:12px;padding:.75rem .85rem;margin-bottom:.6rem;background:#fff}
-.match-meta{font-size:11px;font-weight:600;color:#1a5c2a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem}
+.match-meta{font-size:11px;font-weight:600;color:#001a4d;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem}
 .match-info{font-size:11px;color:#9ca3af;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
 .match-info span{display:flex;align-items:center;gap:3px}
 .match-teams{display:grid;grid-template-columns:1fr 80px;gap:0;margin-bottom:.4rem}
@@ -96,20 +96,20 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .score-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:.25rem 0}
 .score-row{display:flex;align-items:center;justify-content:center;gap:5px}
 .score-row input{width:40px;height:38px;text-align:center;font-size:17px;font-weight:600;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit}
-.score-row input:focus{border-color:var(--field);outline:none;box-shadow:0 0 0 3px rgba(26,92,42,.1)}
+.score-row input:focus{border-color:#001a4d;outline:none;box-shadow:0 0 0 3px rgba(0,26,77,.15)}
 .score-sep{font-size:18px;color:#9ca3af;font-weight:500}
 .static-score{font-size:20px;font-weight:700;color:#111;text-align:center;letter-spacing:1px}
 .match-footer{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:.4rem}
 .pts-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
-.pts-4{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.pts-4{background:#e8f0fe;color:#0c2d6e;border:1px solid #b8ceff}
 .pts-2{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe}
 .pts-0{background:#f9fafb;color:#6b7280;border:1px solid #e5e7eb}
-.real-badge{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.real-badge{background:#e8f0fe;color:#0c2d6e;border:1px solid #b8ceff;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
 
 .save-btn{width:100%;padding:13px;background:var(--field);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:.75rem;display:flex;align-items:center;justify-content:center;gap:8px}
 .save-btn:hover{background:var(--field-dark)}
 .save-btn:active{transform:scale(.98)}
-.save-ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:10px;padding:.65rem;font-size:13px;text-align:center;margin-top:.6rem;display:none;font-weight:500}
+.save-ok{background:#e8f0fe;color:#0c2d6e;border:1px solid #b8ceff;border-radius:10px;padding:.65rem;font-size:13px;text-align:center;margin-top:.6rem;display:none;font-weight:500}
 
 /* RANKING */
 .metrics-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.85rem}
@@ -123,11 +123,11 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .rank-header span:nth-child(2){text-align:left}
 .rank-row{display:grid;grid-template-columns:32px 1fr 44px 52px 52px;gap:4px;align-items:center;padding:.65rem .85rem;border-bottom:1px solid #f3f4f6}
 .rank-row:last-child{border-bottom:none}
-.rank-row.me{background:#f0fdf4}
+.rank-row.me{background:#e8f0fe}
 .rpos{font-size:15px;font-weight:700;text-align:center}
 .rpos.gold{color:#BA7517}.rpos.silver{color:#9ca3af}.rpos.bronze{color:#92400e}
 .rnick{font-size:13px;font-weight:600;color:#111}
-.ryou{font-size:10px;color:var(--field);font-weight:500;display:block}
+.ryou{font-size:10px;color:#001a4d;font-weight:500;display:block}
 .rval{font-size:13px;text-align:center;color:#6b7280;font-weight:500}
 .rval.pts{font-size:15px;font-weight:700;color:#111}
 
@@ -136,7 +136,7 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .contact-title{font-size:15px;font-weight:600;color:#111;margin-bottom:.25rem}
 .contact-sub{font-size:13px;color:#6b7280;margin-bottom:1rem;line-height:1.5}
 textarea{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;font-family:inherit;resize:vertical;min-height:100px;color:#111;background:#fff}
-textarea:focus{outline:none;border-color:var(--field);box-shadow:0 0 0 3px rgba(26,92,42,.1)}
+textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,77,.15)}
 .send-btn{width:100%;padding:12px;background:var(--field);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:.75rem}
 .send-btn:hover{background:var(--field-dark)}
 .send-btn:disabled{opacity:.6;cursor:not-allowed}
@@ -144,7 +144,7 @@ textarea:focus{outline:none;border-color:var(--field);box-shadow:0 0 0 3px rgba(
 /* ADMIN */
 .admin-tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
 .admin-tab-btn{padding:6px 14px;border:1px solid #d1d5db;border-radius:20px;font-size:12px;font-weight:600;background:#fff;color:#6b7280;cursor:pointer;font-family:inherit}
-.admin-tab-btn.active{background:var(--field);color:#fff;border-color:var(--field)}
+.admin-tab-btn.active{background:var(--field);color:#fff;border-color:#001a4d}
 .section-lbl{font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.65rem}
 .admin-block{border:1px solid #e5e7eb;border-radius:12px;padding:.75rem;margin-bottom:.85rem}
 .admin-match{display:grid;grid-template-columns:1fr 44px 1fr;gap:6px;align-items:center;padding:.5rem 0;border-bottom:1px solid #f3f4f6}
@@ -158,7 +158,7 @@ textarea:focus{outline:none;border-color:var(--field);box-shadow:0 0 0 3px rgba(
 
 /* LOADING */
 .loading{display:flex;align-items:center;justify-content:center;padding:3rem;flex-direction:column;gap:.75rem}
-.spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:var(--field);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#001a4d;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-txt{font-size:14px;color:#6b7280}
 </style>
@@ -912,14 +912,14 @@ function renderAdminApi(el) {
   el.innerHTML = `<div class="section-lbl">API Key — football-data.org</div>
   <div class="admin-block" style="padding:1rem">
     <p style="font-size:13px;color:#6b7280;margin-bottom:.85rem;line-height:1.6">
-      Registrate gratis en <a href="https://www.football-data.org" style="color:var(--field);font-weight:600">football-data.org</a> para obtener tu clave y actualizar resultados automáticamente.
+      Registrate gratis en <a href="https://www.football-data.org" style="color:#001a4d;font-weight:600">football-data.org</a> para obtener tu clave y actualizar resultados automáticamente.
     </p>
     <div class="fg"><label>API Key</label><input type="text" id="api-input" value="${DB.apiKey}" placeholder="Tu clave aquí"></div>
     <button class="green-btn" onclick="saveApiKeyDB()">
       <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       Guardar
     </button>
-    ${DB.apiKey ? '<span style="margin-left:.75rem;font-size:12px;color:#166534;font-weight:600">✓ Activa</span>' : ''}
+    ${DB.apiKey ? '<span style="margin-left:.75rem;font-size:12px;color:#0c2d6e;font-weight:600">✓ Activa</span>' : ''}
   </div>`;
 }
 
