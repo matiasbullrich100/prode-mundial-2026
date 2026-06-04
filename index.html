@@ -23,7 +23,7 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 /* AUTH */
 .auth-wrap{padding:1.25rem}
 .auth-hero{background:var(--field);padding:2.5rem 1.25rem 2rem;border-radius:16px;text-align:center;margin-bottom:1.25rem}
-.auth-ball{font-size:48px;margin-bottom:.5rem}
+.auth-ball{margin-bottom:.5rem;display:flex;justify-content:center}
 .auth-title{font-size:24px;font-weight:600;color:#fff}
 .auth-title span{color:#d4af37}
 .auth-sub{font-size:13px;color:#a0b8f0;margin-top:.25rem}
@@ -170,7 +170,31 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
 <div id="screen-login" class="screen active">
   <div class="auth-wrap">
     <div class="auth-hero">
-      <div class="auth-ball">⚽</div>
+      <div class="auth-ball"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:72px;height:72px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3))">
+  <defs>
+    <clipPath id="ballClip">
+      <circle cx="40" cy="40" r="36"/>
+    </clipPath>
+  </defs>
+  <circle cx="40" cy="40" r="36" fill="#f0f0f0"/>
+  <g clip-path="url(#ballClip)">
+    <polygon points="40,4 76,62 4,62" fill="#e63946" opacity="0.85"/>
+    <polygon points="40,76 4,18 76,18" fill="#2b7a3b" opacity="0.75"/>
+    <polygon points="4,4 4,76 40,40" fill="#1a3a8f" opacity="0.8"/>
+    <polygon points="76,4 76,76 40,40" fill="#1a3a8f" opacity="0.7"/>
+    <polygon points="40,4 76,4 76,62" fill="#e63946" opacity="0.6"/>
+    <polygon points="40,76 4,76 4,18" fill="#2b7a3b" opacity="0.6"/>
+    <path d="M40,40 L76,4 L76,76 Z" fill="#f8c300" opacity="0.15"/>
+    <path d="M40,40 L4,4 L4,76 Z" fill="#f8c300" opacity="0.15"/>
+  </g>
+  <circle cx="40" cy="40" r="36" fill="none" stroke="#d4af37" stroke-width="2"/>
+  <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  <line x1="40" y1="4" x2="4" y2="62" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <line x1="40" y1="4" x2="76" y2="62" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <line x1="4" y1="62" x2="76" y2="62" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <circle cx="40" cy="40" r="36" fill="url(#shine)" opacity="0.2"/>
+  <ellipse cx="30" cy="25" rx="10" ry="6" fill="white" opacity="0.2" transform="rotate(-30 30 25)"/>
+</svg></div>
       <div class="auth-title">Prode <span>Mundial 2026</span></div>
       <div class="auth-sub">USA · Canadá · México · FIFA World Cup</div>
     </div>
@@ -957,7 +981,31 @@ window.togglePin = (which) => {
   await loadDB();
   document.getElementById('screen-login').innerHTML = `<div class="auth-wrap">
     <div class="auth-hero">
-      <div class="auth-ball">⚽</div>
+      <div class="auth-ball"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:72px;height:72px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3))">
+  <defs>
+    <clipPath id="ballClip">
+      <circle cx="40" cy="40" r="36"/>
+    </clipPath>
+  </defs>
+  <circle cx="40" cy="40" r="36" fill="#f0f0f0"/>
+  <g clip-path="url(#ballClip)">
+    <polygon points="40,4 76,62 4,62" fill="#e63946" opacity="0.85"/>
+    <polygon points="40,76 4,18 76,18" fill="#2b7a3b" opacity="0.75"/>
+    <polygon points="4,4 4,76 40,40" fill="#1a3a8f" opacity="0.8"/>
+    <polygon points="76,4 76,76 40,40" fill="#1a3a8f" opacity="0.7"/>
+    <polygon points="40,4 76,4 76,62" fill="#e63946" opacity="0.6"/>
+    <polygon points="40,76 4,76 4,18" fill="#2b7a3b" opacity="0.6"/>
+    <path d="M40,40 L76,4 L76,76 Z" fill="#f8c300" opacity="0.15"/>
+    <path d="M40,40 L4,4 L4,76 Z" fill="#f8c300" opacity="0.15"/>
+  </g>
+  <circle cx="40" cy="40" r="36" fill="none" stroke="#d4af37" stroke-width="2"/>
+  <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  <line x1="40" y1="4" x2="4" y2="62" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <line x1="40" y1="4" x2="76" y2="62" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <line x1="4" y1="62" x2="76" y2="62" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <circle cx="40" cy="40" r="36" fill="url(#shine)" opacity="0.2"/>
+  <ellipse cx="30" cy="25" rx="10" ry="6" fill="white" opacity="0.2" transform="rotate(-30 30 25)"/>
+</svg></div>
       <div class="auth-title">Prode <span>Mundial 2026</span></div>
       <div class="auth-sub">USA · Canadá · México · FIFA World Cup</div>
     </div>
