@@ -156,6 +156,22 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
 .green-btn:hover{background:var(--field-dark)}
 .phase-lbl{font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.4rem;margin-top:.25rem}
 
+/* WELCOME MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:var(--color-background-primary);border-radius:16px;max-width:400px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-header{background:#001a4d;padding:1.25rem;text-align:center}
+.modal-header h2{font-size:18px;font-weight:600;color:#fff;margin-bottom:4px}
+.modal-header p{font-size:12px;color:#a0b8f0}
+.modal-body{padding:1.25rem}
+.rule{display:flex;gap:10px;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.rule:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.rule-icon{font-size:24px;flex-shrink:0;width:36px;text-align:center}
+.rule-text{font-size:14px;color:var(--color-text-primary);line-height:1.5}
+.rule-text strong{color:#001a4d;display:block;margin-bottom:2px}
+.modal-footer{padding:1rem 1.25rem;border-top:0.5px solid var(--color-border-tertiary)}
+.modal-btn{width:100%;padding:12px;background:#001a4d;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.modal-btn:hover{background:#001030}
+
 /* LOADING */
 .loading{display:flex;align-items:center;justify-content:center;padding:3rem;flex-direction:column;gap:.75rem}
 .spinner{width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#001a4d;border-radius:50%;animation:spin .8s linear infinite}
@@ -299,6 +315,37 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
     </div>
     <div id="admin-content">
       <div class="loading"><div class="spinner"></div><div class="loading-txt">Cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WELCOME MODAL -->
+<div id="welcome-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>⚽ Bienvenido al Prode 2026</h2>
+      <p>FIFA World Cup · USA · Canadá · México</p>
+    </div>
+    <div class="modal-body">
+      <div class="rule">
+        <div class="rule-icon">🎯</div>
+        <div class="rule-text"><strong>Sistema de puntos</strong>Acertar ganador, perdedor o empate: <strong>2 puntos</strong>. Si además acertás el resultado exacto: <strong>+2 puntos más</strong> (máximo 4 pts por partido).</div>
+      </div>
+      <div class="rule">
+        <div class="rule-icon">📝</div>
+        <div class="rule-text"><strong>Carga parcial o total</strong>Podés cargar tus pronósticos de a poco — no es necesario completar todos de una vez. Guardá cuando quieras y seguí después.</div>
+      </div>
+      <div class="rule">
+        <div class="rule-icon">✏️</div>
+        <div class="rule-text"><strong>Modificaciones</strong>Podés cambiar tus pronósticos todas las veces que quieras hasta las <strong>23:59 hs del día anterior</strong> al inicio de cada fase.</div>
+      </div>
+      <div class="rule">
+        <div class="rule-icon">🏆</div>
+        <div class="rule-text"><strong>Fases</strong>Grupos → Octavos → Cuartos → Semis → Final. Aunque no aciertes en grupos, podés seguir sumando en las fases siguientes.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeWelcome()">¡Entendido, a jugar!</button>
     </div>
   </div>
 </div>
@@ -514,11 +561,26 @@ window.doRegister = async () => {
 
 window.doLogout = () => { S.cur = null; showScreen('login'); };
 
+window.closeWelcome = () => {
+  document.getElementById('welcome-modal').style.display = 'none';
+  // Mark as seen in localStorage
+  try { localStorage.setItem('welcomed_' + S.cur, '1'); } catch(e) {}
+};
+
+function showWelcomeIfNeeded() {
+  try {
+    const seen = localStorage.getItem('welcomed_' + S.cur);
+    if(!seen) {
+      document.getElementById('welcome-modal').style.display = 'flex';
+    }
+  } catch(e) {}
+}
+
 function showScreen(s) {
   ['login','main','admin'].forEach(x => document.getElementById('screen-'+x).classList.remove('active'));
   document.getElementById('screen-'+s).classList.add('active');
-  if(s === 'main') initMain();
-  if(s === 'admin') renderAdmin();
+  if(s === 'main') { initMain(); showWelcomeIfNeeded(); }
+  if(s === 'admin') { renderAdmin(); showWelcomeIfNeeded(); }
 }
 
 function calcPts(pk, res) {
