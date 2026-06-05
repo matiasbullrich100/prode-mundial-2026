@@ -285,7 +285,7 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
     </button>
     <button class="bnav-btn" id="bn-reglas" onclick="mainTab('reglas')">
       <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      Reglas
+      Bases
     </button>
   </div>
   <div class="content">
@@ -316,7 +316,7 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
       <button class="admin-tab-btn" id="at-results" onclick="adminTab('results')">Resultados</button>
       <button class="admin-tab-btn" id="at-pronosticos" onclick="adminTab('pronosticos')">Pronósticos</button>
       <button class="admin-tab-btn" id="at-ranking" onclick="adminTab('ranking')">Ranking</button>
-      <button class="admin-tab-btn" id="at-reglas" onclick="adminTab('reglas')">Reglas</button>
+      <button class="admin-tab-btn" id="at-reglas" onclick="adminTab('reglas')">Bases</button>
       <button class="admin-tab-btn" id="at-api" onclick="adminTab('api')">API Key</button>
     </div>
     <div id="admin-content">
@@ -740,7 +740,7 @@ function renderReglas() {
   const el = document.getElementById('tab-reglas');
   el.innerHTML = `
     <div style="margin-bottom:.85rem">
-      <div style="font-size:18px;font-weight:700;color:#001a4d;margin-bottom:.25rem">📋 Reglamento</div>
+      <div style="font-size:18px;font-weight:700;color:#001a4d;margin-bottom:.25rem">📋 Bases y Condiciones</div>
       <div style="font-size:13px;color:#6b7280">Prode Mundial FIFA 2026</div>
     </div>
     <div class="card" style="margin-bottom:.75rem">
