@@ -997,11 +997,11 @@ function renderRankingInto(container) {
   const users = Object.entries(DB.users);
   const scores = users.map(([email,u])=>({nick:u.nick,email,...userScore(email)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
   const me = scores.find(s=>s.email===S.cur);
-  const mePos = scores.indexOf(me)+1;
+  const mePos = me ? scores.indexOf(me)+1 : '—';
 
   let html = `<div class="metrics-row">
     <div class="metric"><div class="metric-val">${scores.length}</div><div class="metric-lbl">Participantes</div></div>
-    <div class="metric"><div class="metric-val">${mePos||'—'}</div><div class="metric-lbl">Tu posición</div></div>
+    <div class="metric"><div class="metric-val">${mePos}</div><div class="metric-lbl">Tu posición</div></div>
   </div>
   <div class="metrics-row">
     <div class="metric"><div class="metric-val">${me?me.total:0}</div><div class="metric-lbl">Tus puntos</div></div>
@@ -1009,11 +1009,12 @@ function renderRankingInto(container) {
   </div>
   <div class="divider"></div>
   <div class="rank-table">
-    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px${isAdmin?' 44px':''}">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Pts</span>${isAdmin?'<span>Pagó</span>':''}
+    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Pts</span><span>Pagó</span>
     </div>`;
-  if(scores.length===0) {
-    html += `<div style="padding:1.25rem;text-align:center;font-size:13px;color:#6b7280">Sin participantes todavía.</div>`;
+
+  if(scores.length === 0) {
+    html += '<div style="padding:1.25rem;text-align:center;font-size:13px;color:#6b7280">Sin participantes todavía.</div>';
   } else {
     scores.forEach((s,i) => {
       const isMe = s.email===S.cur;
@@ -1032,8 +1033,9 @@ function renderRankingInto(container) {
     });
   }
   html += '</div>';
-  container.innerHTML += html;
+  container.innerHTML = html;
 }
+
 
 function renderAdmin() {
   const el = document.getElementById('admin-content');
