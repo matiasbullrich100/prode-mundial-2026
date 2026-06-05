@@ -316,6 +316,7 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
       <button class="admin-tab-btn" id="at-results" onclick="adminTab('results')">Resultados</button>
       <button class="admin-tab-btn" id="at-pronosticos" onclick="adminTab('pronosticos')">Pronósticos</button>
       <button class="admin-tab-btn" id="at-ranking" onclick="adminTab('ranking')">Ranking</button>
+      <button class="admin-tab-btn" id="at-reglas" onclick="adminTab('reglas')">Reglas</button>
       <button class="admin-tab-btn" id="at-api" onclick="adminTab('api')">API Key</button>
     </div>
     <div id="admin-content">
@@ -824,7 +825,7 @@ window.sendContact = async () => {
 
 window.adminTab = (t) => {
   S.adminTab = t;
-  ['fixture','results','pronosticos','ranking','api'].forEach(x => {
+  ['fixture','results','pronosticos','ranking','reglas','api'].forEach(x => {
     const el = document.getElementById('at-'+x);
     if(el) el.classList.toggle('active', x===t);
   });
@@ -946,6 +947,14 @@ function renderAdmin() {
   if(S.adminTab==='api') renderAdminApi(el);
   if(S.adminTab==='pronosticos') { el.innerHTML = ''; renderProdeInto(el); }
   if(S.adminTab==='ranking') { el.innerHTML = ''; renderRankingInto(el); }
+  if(S.adminTab==='reglas') {
+    const tmp = document.createElement('div');
+    document.getElementById('tab-reglas') && (document.getElementById('tab-reglas').style.display='block');
+    renderReglas();
+    // Copy reglas content to admin content
+    el.innerHTML = document.getElementById('tab-reglas').innerHTML;
+    document.getElementById('tab-reglas').style.display='none';
+  }
 }
 
 function renderAdminFixture(el) {
