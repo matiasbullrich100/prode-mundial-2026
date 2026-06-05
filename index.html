@@ -707,6 +707,7 @@ window.savePicksDB = async () => {
 
 function renderRanking() {
   const el = document.getElementById('tab-ranking');
+  const isAdmin = DB.users[S.cur]?.isAdmin || false;
   const users = Object.entries(DB.users);
   const scores = users.map(([email,u])=>({nick:u.nick,email,...userScore(email)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
   const me = scores.find(s=>s.email===S.cur);
@@ -722,8 +723,8 @@ function renderRanking() {
   </div>
   <div class="divider"></div>
   <div class="rank-table">
-    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Pts</span><span>Pagó</span>
+    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px${isAdmin?' 44px':''}">
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Pts</span>${isAdmin?'<span>Pagó</span>':''}
     </div>`;
 
   if(scores.length===0) {
@@ -735,13 +736,13 @@ function renderRanking() {
       const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
       const paid = (DB.paid||{})[s.email];
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
-      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
+      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px${isAdmin?' 44px':''}">
         <div class="${posClass}">${medal}</div>
         <div class="rnick">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
         <div class="rval">${s.winner}</div>
         <div class="rval">${s.exact}</div>
         <div class="rval pts">${s.total}</div>
-        <div class="rval">${paidIcon}</div>
+        ${isAdmin?`<div class="rval">${paidIcon}</div>`:''}
       </div>`;
     });
   }
@@ -1008,8 +1009,8 @@ function renderRankingInto(container) {
   </div>
   <div class="divider"></div>
   <div class="rank-table">
-    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Pts</span><span>Pagó</span>
+    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px${isAdmin?' 44px':''}">
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Pts</span>${isAdmin?'<span>Pagó</span>':''}
     </div>`;
   if(scores.length===0) {
     html += `<div style="padding:1.25rem;text-align:center;font-size:13px;color:#6b7280">Sin participantes todavía.</div>`;
