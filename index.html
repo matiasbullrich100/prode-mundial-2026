@@ -287,12 +287,17 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
       <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       Bases
     </button>
+    <button class="bnav-btn" id="bn-ayuda" onclick="mainTab('ayuda')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Ayuda
+    </button>
   </div>
   <div class="content">
     <div id="tab-prode"></div>
     <div id="tab-ranking" style="display:none"></div>
     <div id="tab-contacto" style="display:none"></div>
     <div id="tab-reglas" style="display:none"></div>
+    <div id="tab-ayuda" style="display:none"></div>
   </div>
 </div>
 
@@ -602,7 +607,7 @@ function initMain() {
 
 window.mainTab = (t) => {
   S.mTab = t;
-  ['prode','ranking','contacto','reglas'].forEach(x => {
+  ['prode','ranking','contacto','reglas','ayuda'].forEach(x => {
     document.getElementById('tab-'+x).style.display = x===t ? 'block' : 'none';
     const bn = document.getElementById('bn-'+x);
     if(bn) bn.classList.toggle('active', x===t);
@@ -611,6 +616,7 @@ window.mainTab = (t) => {
   if(t==='ranking') renderRanking();
   if(t==='contacto') renderContacto();
   if(t==='reglas') renderReglas();
+  if(t==='ayuda') renderAyuda();
 };
 
 function deadlinePassed(pid) {
@@ -740,6 +746,48 @@ function renderRanking() {
   }
   html += '</div>';
   el.innerHTML = html;
+}
+
+function renderAyuda() {
+  const el = document.getElementById('tab-ayuda');
+  const url = window.location.href.split('?')[0];
+  el.innerHTML = `
+    <div style="margin-bottom:.85rem">
+      <div style="font-size:18px;font-weight:700;color:#001a4d;margin-bottom:.25rem">📱 Ayuda</div>
+      <div style="font-size:13px;color:#6b7280">Cómo usar el Prode 2026</div>
+    </div>
+
+    <div class="card" style="margin-bottom:.75rem">
+      <div style="font-size:15px;font-weight:700;color:#001a4d;margin-bottom:10px">🍎 Agregar a pantalla de inicio (iPhone)</div>
+      <div style="font-size:14px;color:#222;line-height:1.8">
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">1</span><span>Abrí Safari en tu iPhone (no Chrome)</span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">2</span><span>Ingresá a: <strong>${url}</strong></span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">3</span><span>Tocá el ícono de compartir <strong>⎋</strong> (abajo en el centro)</span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">4</span><span>Elegí <strong>"Agregar a pantalla de inicio"</strong></span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">5</span><span>Tocá <strong>"Agregar"</strong> — ¡listo! Ya aparece como una app</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:.75rem">
+      <div style="font-size:15px;font-weight:700;color:#001a4d;margin-bottom:10px">🤖 Agregar a pantalla de inicio (Android)</div>
+      <div style="font-size:14px;color:#222;line-height:1.8">
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">1</span><span>Abrí Chrome en tu Android</span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">2</span><span>Ingresá a: <strong>${url}</strong></span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">3</span><span>Tocá los <strong>3 puntitos ⋮</strong> arriba a la derecha</span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">4</span><span>Elegí <strong>"Agregar a pantalla de inicio"</strong></span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="background:#001a4d;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">5</span><span>Tocá <strong>"Agregar"</strong> — ¡listo!</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:15px;font-weight:700;color:#001a4d;margin-bottom:10px">❓ Preguntas frecuentes</div>
+      <div style="font-size:14px;color:#222;line-height:1.7">
+        <div style="margin-bottom:.75rem"><strong>¿Puedo cargar mis pronósticos de a poco?</strong><br>Sí, guardás cuando quieras y seguís después.</div>
+        <div style="margin-bottom:.75rem"><strong>¿Puedo modificar mis pronósticos?</strong><br>Sí, hasta las 23:59 hs del día anterior al inicio de cada fase.</div>
+        <div><strong>¿Tengo alguna duda?</strong><br>Usá la pestaña <strong>Consultas</strong> para escribirle al admin.</div>
+      </div>
+    </div>
+  `;
 }
 
 function renderReglas() {
