@@ -323,6 +323,7 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
       <button class="admin-tab-btn" id="at-ranking" onclick="adminTab('ranking')">Ranking</button>
       <button class="admin-tab-btn" id="at-pagos" onclick="adminTab('pagos')">Pagos</button>
       <button class="admin-tab-btn" id="at-reglas" onclick="adminTab('reglas')">Bases</button>
+      <button class="admin-tab-btn" id="at-ayuda" onclick="adminTab('ayuda')">Ayuda</button>
       <button class="admin-tab-btn" id="at-api" onclick="adminTab('api')">API Key</button>
     </div>
     <div id="admin-content">
@@ -915,7 +916,7 @@ window.sendContact = async () => {
 
 window.adminTab = (t) => {
   S.adminTab = t;
-  ['fixture','results','pronosticos','ranking','pagos','reglas','api'].forEach(x => {
+  ['fixture','results','pronosticos','ranking','pagos','reglas','ayuda','api'].forEach(x => {
     const el = document.getElementById('at-'+x);
     if(el) el.classList.toggle('active', x===t);
   });
@@ -1041,6 +1042,13 @@ function renderAdmin() {
   if(S.adminTab==='pronosticos') { el.innerHTML = ''; renderProdeInto(el); }
   if(S.adminTab==='ranking') { el.innerHTML = ''; renderRankingInto(el); }
   if(S.adminTab==='pagos') renderAdminPagos(el);
+  if(S.adminTab==='ayuda') {
+    const tmp = document.createElement('div');
+    document.getElementById('tab-ayuda').style.display='block';
+    renderAyuda();
+    el.innerHTML = document.getElementById('tab-ayuda').innerHTML;
+    document.getElementById('tab-ayuda').style.display='none';
+  }
   if(S.adminTab==='reglas') {
     const tmp = document.createElement('div');
     document.getElementById('tab-reglas') && (document.getElementById('tab-reglas').style.display='block');
