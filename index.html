@@ -221,10 +221,10 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
       </div>
       <div id="err-msg" class="err-msg"></div>
       <div id="form-in">
-        <div class="fg"><label>Email</label><input type="email" id="in-email" placeholder="vos@email.com" autocomplete="email"></div>
+        <div class="fg"><label>Email</label><input type="email" id="in-email" placeholder="vos@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('pin-login').focus()"></div>
         <div class="fg"><label>PIN de 4 dígitos</label>
           <div style="display:flex;align-items:center;gap:8px">
-            <input type="password" inputmode="numeric" maxlength="4" id="pin-login" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center">
+            <input type="password" inputmode="numeric" maxlength="4" id="pin-login" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center" onkeydown="if(event.key==='Enter')doLogin()">
             <button type="button" id="eye-pi" onclick="togglePin('login')" style="width:48px;height:48px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;color:#6b7280;flex-shrink:0;font-size:20px"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           </div>
         </div>
@@ -238,7 +238,7 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
         <div class="fg"><label>Apodo (se muestra en el ranking)</label><input type="text" id="up-nick" placeholder="ej: El Tano" maxlength="20"></div>
         <div class="fg"><label>PIN de 4 dígitos</label>
           <div style="display:flex;align-items:center;gap:8px">
-            <input type="password" inputmode="numeric" maxlength="4" id="pin-reg" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center">
+            <input type="password" inputmode="numeric" maxlength="4" id="pin-reg" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center" onkeydown="if(event.key==='Enter')doRegister()">
             <button type="button" id="eye-pr" onclick="togglePin('reg')" style="width:48px;height:48px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;color:#6b7280;flex-shrink:0;font-size:20px"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           </div>
         </div>
@@ -1118,7 +1118,7 @@ window.togglePin = (which) => {
         <div class="fg"><label>Email</label><input type="email" id="in-email" placeholder="vos@email.com" autocomplete="email"></div>
         <div class="fg"><label>PIN de 4 dígitos</label>
           <div class="pin-row">
-            <input type="password" inputmode="numeric" maxlength="4" id="pin-login" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center">
+            <input type="password" inputmode="numeric" maxlength="4" id="pin-login" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center" onkeydown="if(event.key==='Enter')doLogin()">
             <button type="button" id="eye-pi" onclick="togglePin('login')" style="width:48px;height:48px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;color:#6b7280;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           </div>
         </div>
@@ -1132,7 +1132,7 @@ window.togglePin = (which) => {
         <div class="fg"><label>Apodo (se muestra en el ranking)</label><input type="text" id="up-nick" placeholder="ej: El Tano" maxlength="20"></div>
         <div class="fg"><label>PIN de 4 dígitos</label>
           <div class="pin-row">
-            <input type="password" inputmode="numeric" maxlength="4" id="pin-reg" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center">
+            <input type="password" inputmode="numeric" maxlength="4" id="pin-reg" placeholder="••••" style="flex:1;padding:12px;font-size:22px;font-weight:700;letter-spacing:8px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#111;font-family:inherit;text-align:center" onkeydown="if(event.key==='Enter')doRegister()">
             <button type="button" id="eye-pr" onclick="togglePin('reg')" style="width:48px;height:48px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;cursor:pointer;color:#6b7280;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           </div>
         </div>
