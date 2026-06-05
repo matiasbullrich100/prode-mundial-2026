@@ -283,11 +283,16 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
       <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Consultas
     </button>
+    <button class="bnav-btn" id="bn-reglas" onclick="mainTab('reglas')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Reglas
+    </button>
   </div>
   <div class="content">
     <div id="tab-prode"></div>
     <div id="tab-ranking" style="display:none"></div>
     <div id="tab-contacto" style="display:none"></div>
+    <div id="tab-reglas" style="display:none"></div>
   </div>
 </div>
 
@@ -526,6 +531,11 @@ window.doRegister = async () => {
   await saveUsers();
   S.cur = email;
   showScreen(first ? 'admin' : 'main');
+  // Show welcome modal on first register
+  setTimeout(() => {
+    const m = document.getElementById('welcome-modal');
+    if(m) m.style.display = 'flex';
+  }, 300);
 };
 
 window.doLogout = () => { S.cur = null; showScreen('login'); };
@@ -549,8 +559,8 @@ function showWelcomeIfNeeded() {
 function showScreen(s) {
   ['login','main','admin'].forEach(x => document.getElementById('screen-'+x).classList.remove('active'));
   document.getElementById('screen-'+s).classList.add('active');
-  if(s === 'main') { initMain(); showWelcomeIfNeeded(); }
-  if(s === 'admin') { renderAdmin(); showWelcomeIfNeeded(); }
+  if(s === 'main') initMain();
+  if(s === 'admin') renderAdmin();
 }
 
 function calcPts(pk, res) {
@@ -588,13 +598,15 @@ function initMain() {
 
 window.mainTab = (t) => {
   S.mTab = t;
-  ['prode','ranking','contacto'].forEach(x => {
+  ['prode','ranking','contacto','reglas'].forEach(x => {
     document.getElementById('tab-'+x).style.display = x===t ? 'block' : 'none';
-    document.getElementById('bn-'+x).classList.toggle('active', x===t);
+    const bn = document.getElementById('bn-'+x);
+    if(bn) bn.classList.toggle('active', x===t);
   });
   if(t==='prode') renderProde();
   if(t==='ranking') renderRanking();
   if(t==='contacto') renderContacto();
+  if(t==='reglas') renderReglas();
 };
 
 function deadlinePassed(pid) {
@@ -721,6 +733,52 @@ function renderRanking() {
   }
   html += '</div>';
   el.innerHTML = html;
+}
+
+function renderReglas() {
+  const el = document.getElementById('tab-reglas');
+  el.innerHTML = `
+    <div style="margin-bottom:.85rem">
+      <div style="font-size:18px;font-weight:700;color:#001a4d;margin-bottom:.25rem">📋 Reglamento</div>
+      <div style="font-size:13px;color:#6b7280">Prode Mundial FIFA 2026</div>
+    </div>
+    <div class="card" style="margin-bottom:.75rem">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:24px;flex-shrink:0">🎯</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#001a4d;margin-bottom:6px">Sistema de puntos</div>
+          <div style="font-size:14px;color:#222;line-height:1.6">Acertar ganador, perdedor o empate: <strong>2 puntos</strong>.<br>Si además acertás el resultado exacto: <strong>+2 puntos</strong> adicionales.<br>Máximo <strong>4 puntos</strong> por partido.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:.75rem">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:24px;flex-shrink:0">📝</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#001a4d;margin-bottom:6px">Carga parcial o total</div>
+          <div style="font-size:14px;color:#222;line-height:1.6">Podés cargar tus pronósticos de a poco, no es necesario completarlos todos de una vez. Guardá cuando quieras y seguí completando después.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:.75rem">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:24px;flex-shrink:0">✏️</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#001a4d;margin-bottom:6px">Modificaciones</div>
+          <div style="font-size:14px;color:#222;line-height:1.6">Podés modificar tus pronósticos todas las veces que quieras hasta las <strong>23:59 hs del día anterior</strong> al inicio de cada fase.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:24px;flex-shrink:0">🏆</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#001a4d;margin-bottom:6px">Fases del torneo</div>
+          <div style="font-size:14px;color:#222;line-height:1.6">Grupos → Octavos de final → Cuartos de final → Semifinales → Final.<br><br>Aunque no aciertes los ganadores en la fase de grupos, podés seguir participando y sumando puntos en las fases siguientes.</div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function renderContacto() {
