@@ -812,7 +812,7 @@ window.sendContact = async () => {
   if(!msg) { errEl.textContent='Escribí un mensaje antes de enviar.'; errEl.style.display='flex'; return; }
   btn.disabled=true; btn.textContent='Enviando...';
   try {
-    await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {from_name:name, from_email:email, message:msg}, EMAILJS_PUBLIC);
+    await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {name:name, email:email, message:msg}, EMAILJS_PUBLIC);
     try { await emailjs.send(EMAILJS_SERVICE, EMAILJS_AUTOREPLY, {to_name:name, to_email:email, message:msg}, EMAILJS_PUBLIC); } catch(e){}
     okEl.style.display='flex';
     document.getElementById('c-msg').value='';
