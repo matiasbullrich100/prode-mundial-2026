@@ -588,7 +588,7 @@ function userScore(email) {
 function initMain() {
   const u = DB.users[S.cur];
   const sc = userScore(S.cur);
-  const allUsers = Object.entries(DB.users).filter(([e,u])=>!u.isAdmin);
+  const allUsers = Object.entries(DB.users);
   const scores = allUsers.map(([e,u])=>({e,...userScore(e)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
   const pos = scores.findIndex(s=>s.e===S.cur)+1;
   document.getElementById('hs-nick').textContent = u.nick;
@@ -697,7 +697,7 @@ window.savePicksDB = async () => {
 
 function renderRanking() {
   const el = document.getElementById('tab-ranking');
-  const users = Object.entries(DB.users).filter(([e,u])=>!u.isAdmin);
+  const users = Object.entries(DB.users);
   const scores = users.map(([email,u])=>({nick:u.nick,email,...userScore(email)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
   const me = scores.find(s=>s.email===S.cur);
   const mePos = scores.indexOf(me)+1;
@@ -938,7 +938,7 @@ function renderProdeInto(container) {
 }
 
 function renderRankingInto(container) {
-  const users = Object.entries(DB.users).filter(([e,u])=>!u.isAdmin);
+  const users = Object.entries(DB.users);
   const scores = users.map(([email,u])=>({nick:u.nick,email,...userScore(email)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
   const me = scores.find(s=>s.email===S.cur);
   const mePos = scores.indexOf(me)+1;
