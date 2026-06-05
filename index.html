@@ -1052,12 +1052,12 @@ function renderAdminPagos(el) {
   el.innerHTML = html;
 }
 
-async function togglePaid(email) {
+window.togglePaid = async (email) => {
   if(!DB.paid) DB.paid = {};
   DB.paid[email] = !DB.paid[email];
   await fbSet('paid', {data: DB.paid});
   renderAdmin();
-}
+};
 
 function renderAdminResults(el) {
   let html = '';
