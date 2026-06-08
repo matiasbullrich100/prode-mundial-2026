@@ -156,6 +156,15 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
 .green-btn:hover{background:var(--field-dark)}
 .phase-lbl{font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.4rem;margin-top:.25rem}
 
+/* COUNTDOWN */
+.countdown-bar{background:#001030;padding:.5rem 1rem;text-align:center;border-bottom:1px solid rgba(255,255,255,.1)}
+.countdown-label{font-size:10px;color:#a0b8f0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.countdown-digits{display:flex;align-items:center;justify-content:center;gap:6px}
+.cd-block{background:rgba(255,255,255,.1);border-radius:6px;padding:3px 7px;text-align:center}
+.cd-num{font-size:16px;font-weight:700;color:#fff;line-height:1}
+.cd-lbl{font-size:9px;color:#a0b8f0;text-transform:uppercase;letter-spacing:.3px}
+.cd-sep{font-size:16px;font-weight:700;color:#d4af37;margin-bottom:8px}
+
 /* WELCOME MODAL */
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.25rem;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .modal{background:var(--color-background-primary);border-radius:16px;max-width:400px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -270,6 +279,10 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
       <div class="hstat"><div class="hstat-val" id="hs-nick">—</div><div class="hstat-lbl">Apodo</div></div>
     </div>
   </div>
+  <div class="countdown-bar">
+    <div class="countdown-label">⏱ Inicio del Mundial</div>
+    <div class="countdown-digits" id="countdown-main">—</div>
+  </div>
   <div class="bottom-nav">
     <button class="bnav-btn active" id="bn-prode" onclick="mainTab('prode')">
       <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -314,6 +327,10 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
         Salir
       </button>
     </div>
+  </div>
+  <div class="countdown-bar">
+    <div class="countdown-label">⏱ Inicio del Mundial</div>
+    <div class="countdown-digits" id="countdown-admin">—</div>
   </div>
   <div class="content">
     <div class="admin-tabs">
@@ -1205,6 +1222,45 @@ window.togglePin = (which) => {
     }
   }
 };
+
+// COUNTDOWN
+const WORLD_CUP_START = new Date('2026-06-11T21:00:00Z'); // 11 jun 18:00 hs Argentina (UTC-3)
+
+function updateCountdown() {
+  const now = new Date();
+  const diff = WORLD_CUP_START - now;
+  
+  if(diff <= 0) {
+    ['countdown-main','countdown-admin'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.innerHTML = '<span style="color:#d4af37;font-weight:700;font-size:14px">🏆 ¡El Mundial ha comenzado!</span>';
+    });
+    return;
+  }
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const secs = Math.floor((diff % (1000*60)) / 1000);
+
+  const html = `
+    <div class="cd-block"><div class="cd-num">${String(days).padStart(2,'0')}</div><div class="cd-lbl">días</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num">${String(hours).padStart(2,'0')}</div><div class="cd-lbl">hs</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num">${String(mins).padStart(2,'0')}</div><div class="cd-lbl">min</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num">${String(secs).padStart(2,'0')}</div><div class="cd-lbl">seg</div></div>
+  `;
+  
+  ['countdown-main','countdown-admin'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = html;
+  });
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
 
 // INIT
 (async () => {
