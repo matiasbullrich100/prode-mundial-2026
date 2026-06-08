@@ -319,13 +319,18 @@ textarea:focus{outline:none;border-color:#001a4d;box-shadow:0 0 0 3px rgba(0,26,
   <div class="hero">
     <div class="hero-top">
       <div>
-        <div class="hero-title">⚽ <span>Admin</span> Panel</div>
-        <div class="hero-sub">Gestión del prode</div>
+        <div class="hero-title">⚽ Prode <span>2026</span></div>
+        <div class="hero-sub" id="admin-hero-sub">FIFA World Cup</div>
       </div>
       <button class="logout-btn" onclick="doLogout()">
         <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Salir
       </button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-val" id="admin-hs-pos">—</div><div class="hstat-lbl">Posición</div></div>
+      <div class="hstat"><div class="hstat-val" id="admin-hs-pts">0</div><div class="hstat-lbl">Puntos</div></div>
+      <div class="hstat"><div class="hstat-val" id="admin-hs-nick">—</div><div class="hstat-lbl">Apodo</div></div>
     </div>
   </div>
   <div class="countdown-bar">
@@ -1055,6 +1060,20 @@ function renderRankingInto(container) {
 
 
 function renderAdmin() {
+  // Update admin hero stats
+  const u = DB.users[S.cur];
+  if(u) {
+    const sc = userScore(S.cur);
+    const allUsers = Object.entries(DB.users);
+    const scores = allUsers.map(([e,u])=>({e,...userScore(e)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
+    const pos = scores.findIndex(s=>s.e===S.cur)+1;
+    const nickEl = document.getElementById('admin-hs-nick');
+    const ptsEl = document.getElementById('admin-hs-pts');
+    const posEl = document.getElementById('admin-hs-pos');
+    if(nickEl) nickEl.textContent = u.nick;
+    if(ptsEl) ptsEl.textContent = sc.total;
+    if(posEl) posEl.textContent = pos ? '#'+pos : '—';
+  }
   const el = document.getElementById('admin-content');
   if(S.adminTab==='fixture') renderAdminFixture(el);
   if(S.adminTab==='results') renderAdminResults(el);
