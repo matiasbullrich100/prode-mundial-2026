@@ -760,7 +760,7 @@ function renderRanking() {
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
       html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
         <div class="${posClass}">${medal}</div>
-        <div class="rnick">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
+        <div class="rnick" title="${s.email}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
         <div class="rval">${s.winner}</div>
         <div class="rval">${s.exact}</div>
         <div class="rval pts">${s.total}</div>
@@ -1046,7 +1046,7 @@ function renderRankingInto(container) {
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
       html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
         <div class="${posClass}">${medal}</div>
-        <div class="rnick">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
+        <div class="rnick" title="${s.email}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
         <div class="rval">${s.winner}</div>
         <div class="rval">${s.exact}</div>
         <div class="rval pts">${s.total}</div>
