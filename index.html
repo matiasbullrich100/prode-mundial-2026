@@ -644,7 +644,9 @@ window.mainTab = (t) => {
 
 function deadlinePassed(pid) {
   const ph = PHASES.find(p=>p.id===pid); if(!ph) return false;
-  const d = new Date(ph.start); d.setDate(d.getDate()-1); d.setHours(23,59,59);
+  // Deadline: day before phase start at 23:59 Buenos Aires (UTC-3)
+  // phase start date + T02:59:59Z = 23:59:59 Buenos Aires time the day before
+  const d = new Date(ph.start + 'T02:59:59Z');
   return new Date() > d;
 }
 
