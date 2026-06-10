@@ -510,12 +510,14 @@ async function loadDB() {
   const fixture = await fbGet('fixture');
   const config = await fbGet('config');
   const paid = await fbGet('paid');
+  const regconfig = await fbGet('regconfig');
   DB.users = users?.data || {};
   DB.picks = picks?.data || {};
   DB.results = results?.data || {};
   DB.fixture = fixture?.data || JSON.parse(JSON.stringify(FX_DEF));
   DB.paid = paid?.data || {};
   DB.apiKey = config?.apiKey || '';
+  DB.registroAbierto = regconfig?.abierto !== undefined ? regconfig.abierto : true;
 }
 async function saveUsers() { await fbSet('users', {data: DB.users}); }
 async function savePicks() { await fbSet('picks', {data: DB.picks}); }
@@ -551,6 +553,7 @@ window.doLogin = async () => {
 
 window.doRegister = async () => {
   hideErr();
+  if(!DB.registroAbierto) { showErr('El registro está cerrado. Contactá al administrador.'); return; }
   const email = document.getElementById('up-email').value.trim().toLowerCase();
   const nick = document.getElementById('up-nick').value.trim();
   const p = (document.getElementById('pin-reg')||{value:''}).value.trim();
@@ -1110,7 +1113,19 @@ function renderAdmin() {
 }
 
 function renderAdminFixture(el) {
-  let html = '';
+  const estadoColor = DB.registroAbierto ? '#16a34a' : '#dc2626';
+  const estadoTexto = DB.registroAbierto ? '✅ Registro ABIERTO' : '🔒 Registro CERRADO';
+  const btnTexto = DB.registroAbierto ? 'Cerrar registro' : 'Abrir registro';
+  const btnColor = DB.registroAbierto ? '#dc2626' : '#16a34a';
+  
+  let html = `<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Estado del registro</div>
+      <div style="font-size:15px;font-weight:700;color:${estadoColor}">${estadoTexto}</div>
+    </div>
+    <button onclick="toggleRegistro()" style="padding:8px 16px;background:${btnColor};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">${btnTexto}</button>
+  </div>`;
+  
   PHASES.forEach(ph => {
     const matches = DB.fixture[ph.id] || [];
     html += `<div style="margin-bottom:1.1rem"><div class="phase-lbl">${ph.name}</div><div class="admin-block">`;
@@ -1208,6 +1223,12 @@ window.saveResultsPhase = async (pid) => {
   });
   await saveResults();
   alert('Resultados guardados ✓');
+};
+
+window.toggleRegistro = async () => {
+  DB.registroAbierto = !DB.registroAbierto;
+  await fbSet('regconfig', {abierto: DB.registroAbierto});
+  renderAdmin();
 };
 
 function renderAdminApi(el) {
