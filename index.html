@@ -519,6 +519,8 @@ async function loadDB() {
   DB.apiKey = config?.apiKey || '';
   DB.registroAbierto = regconfig?.abierto !== undefined ? regconfig.abierto : true;
   DB.pronosticosAbiertos = regconfig?.pronosticos !== undefined ? regconfig.pronosticos : false;
+  DB.picksVisibles = regconfig?.picksVisibles !== undefined ? regconfig.picksVisibles : false;
+  DB.usuariosHabilitados = regconfig?.usuariosHabilitados || {};
 }
 async function saveUsers() { await fbSet('users', {data: DB.users}); }
 async function savePicks() { await fbSet('picks', {data: DB.picks}); }
@@ -651,6 +653,8 @@ function deadlinePassed(pid) {
   if(pid === 'grupos') {
     // If admin manually opened pronosticos, always allow
     if(DB.pronosticosAbiertos) return false;
+    // If this specific user is individually enabled
+    if(DB.usuariosHabilitados && DB.usuariosHabilitados[S.cur]) return false;
     const d = new Date('2026-06-11T15:00:00Z');
     return new Date() > d;
   }
@@ -768,9 +772,11 @@ function renderRanking() {
       const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
       const paid = (DB.paid||{})[s.email];
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
+      const nickStyle = DB.picksVisibles && !isMe ? 'cursor:pointer;text-decoration:underline;text-decoration-style:dotted' : '';
+      const nickClick = DB.picksVisibles && !isMe ? `onclick="verPicksUsuario('${s.email}')"` : '';
       html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
         <div class="${posClass}">${medal}</div>
-        <div class="rnick" title="${s.email}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
+        <div class="rnick" title="${s.email}" ${nickClick} style="${nickStyle}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
         <div class="rval">${s.winner}</div>
         <div class="rval">${s.exact}</div>
         <div class="rval pts">${s.total}</div>
@@ -778,9 +784,52 @@ function renderRanking() {
       </div>`;
     });
   }
+  if(DB.picksVisibles) {
+    html += `<div style="font-size:11px;color:#6b7280;text-align:center;margin-top:.5rem">Tocá el nombre de un participante para ver sus pronósticos 👆</div>`;
+  }
   html += '</div>';
   el.innerHTML = html;
 }
+
+window.verPicksUsuario = (email) => {
+  const u = DB.users[email];
+  const picks = DB.picks[email] || {};
+  let html = `<div style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto" onclick="if(event.target===this)this.remove()">
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:480px;padding:1.25rem;margin:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div style="font-size:17px;font-weight:700;color:#001a4d">⚽ Pronósticos de ${u?.nick||email}</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#6b7280">✕</button>
+      </div>`;
+  PHASES.forEach(ph => {
+    const matches = DB.fixture[ph.id] || [];
+    const res = DB.results[ph.id] || {};
+    const anyPick = matches.some(m => picks[m.id]);
+    if(!anyPick) return;
+    html += `<div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:.75rem 0 .4rem">${ph.name}</div>`;
+    matches.forEach(m => {
+      const pk = picks[m.id];
+      if(!pk) return;
+      const r = res[m.id];
+      const correct = r ? (pk.h === r.h && pk.a === r.a) : null;
+      const winnerOk = r ? ((pk.h > pk.a) === (r.h > r.a) && (pk.h < pk.a) === (r.h < r.a) && (pk.h === pk.a) === (r.h === r.a)) : null;
+      let bg = '#f9fafb';
+      if(correct === true) bg = '#dcfce7';
+      else if(winnerOk === true) bg = '#fef9c3';
+      else if(r && !winnerOk) bg = '#fee2e2';
+      html += `<div style="display:flex;align-items:center;padding:.4rem .6rem;border-radius:8px;margin-bottom:.3rem;background:${bg}">
+        <div style="font-size:12px;color:#374151;flex:1;text-align:right">${m.home}</div>
+        <div style="font-size:14px;font-weight:700;color:#001a4d;margin:0 .6rem;white-space:nowrap">${pk.h} - ${pk.a}</div>
+        <div style="font-size:12px;color:#374151;flex:1">${m.away}</div>
+        ${r ? `<div style="font-size:10px;color:#6b7280;margin-left:.4rem">(${r.h}-${r.a})</div>` : ''}
+      </div>`;
+    });
+  });
+  html += `<div style="font-size:11px;color:#6b7280;text-align:center;margin-top:.75rem">Verde = exacto · Amarillo = ganador · Rojo = error</div>
+    </div></div>`;
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  document.body.appendChild(div.firstElementChild);
+};
 
 function renderAyuda() {
   const el = document.getElementById('tab-ayuda');
@@ -1126,6 +1175,10 @@ function renderAdminFixture(el) {
   const pronoTexto = DB.pronosticosAbiertos ? '✅ Pronósticos ABIERTOS' : '🔒 Pronósticos CERRADOS';
   const pronoBtnTexto = DB.pronosticosAbiertos ? 'Cerrar pronósticos' : 'Abrir pronósticos';
   const pronoBtnColor = DB.pronosticosAbiertos ? '#dc2626' : '#16a34a';
+  const picksColor = DB.picksVisibles ? '#16a34a' : '#dc2626';
+  const picksTexto = DB.picksVisibles ? '✅ Pronósticos VISIBLES para todos' : '🔒 Pronósticos OCULTOS';
+  const picksBtnTexto = DB.picksVisibles ? 'Ocultar pronósticos' : 'Mostrar pronósticos a todos';
+  const picksBtnColor = DB.picksVisibles ? '#dc2626' : '#001a4d';
 
   let html = `<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between">
     <div>
@@ -1134,12 +1187,35 @@ function renderAdminFixture(el) {
     </div>
     <button onclick="toggleRegistro()" style="padding:8px 16px;background:${btnColor};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">${btnTexto}</button>
   </div>
-  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between">
     <div>
       <div style="font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Carga de pronósticos</div>
       <div style="font-size:15px;font-weight:700;color:${pronoColor}">${pronoTexto}</div>
     </div>
     <button onclick="togglePronosticos()" style="padding:8px 16px;background:${pronoBtnColor};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">${pronoBtnTexto}</button>
+  </div>
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Ver pronósticos ajenos</div>
+      <div style="font-size:15px;font-weight:700;color:${picksColor}">${picksTexto}</div>
+    </div>
+    <button onclick="togglePicksVisibles()" style="padding:8px 16px;background:${picksBtnColor};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">${picksBtnTexto}</button>
+  </div>
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:1rem">
+    <div style="font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Habilitar usuario individual</div>
+    <div style="font-size:12px;color:#6b7280;margin-bottom:10px">Permitir que un usuario específico cargue/modifique sus pronósticos aunque estén cerrados.</div>
+    ${Object.entries(DB.users).map(([email, u]) => {
+      const hab = (DB.usuariosHabilitados||{})[email];
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #f3f4f6">
+        <div>
+          <div style="font-size:14px;font-weight:500;color:#111">${u.nick}</div>
+          <div style="font-size:11px;color:#6b7280">${email}</div>
+        </div>
+        <button onclick="toggleUsuarioHabilitado('${email}')" style="padding:5px 12px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;background:${hab?'#f59e0b':'#e5e7eb'};color:${hab?'#fff':'#374151'}">
+          ${hab ? '✏️ Habilitado' : 'Habilitar'}
+        </button>
+      </div>`;
+    }).join('')}
   </div>`;
   
   PHASES.forEach(ph => {
@@ -1243,13 +1319,26 @@ window.saveResultsPhase = async (pid) => {
 
 window.togglePronosticos = async () => {
   DB.pronosticosAbiertos = !DB.pronosticosAbiertos;
-  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos});
+  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos, picksVisibles: DB.picksVisibles, usuariosHabilitados: DB.usuariosHabilitados});
   renderAdmin();
 };
 
 window.toggleRegistro = async () => {
   DB.registroAbierto = !DB.registroAbierto;
-  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos});
+  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos, picksVisibles: DB.picksVisibles, usuariosHabilitados: DB.usuariosHabilitados});
+  renderAdmin();
+};
+
+window.togglePicksVisibles = async () => {
+  DB.picksVisibles = !DB.picksVisibles;
+  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos, picksVisibles: DB.picksVisibles, usuariosHabilitados: DB.usuariosHabilitados});
+  renderAdmin();
+};
+
+window.toggleUsuarioHabilitado = async (email) => {
+  if(!DB.usuariosHabilitados) DB.usuariosHabilitados = {};
+  DB.usuariosHabilitados[email] = !DB.usuariosHabilitados[email];
+  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos, picksVisibles: DB.picksVisibles, usuariosHabilitados: DB.usuariosHabilitados});
   renderAdmin();
 };
 
