@@ -647,8 +647,11 @@ window.mainTab = (t) => {
 
 function deadlinePassed(pid) {
   const ph = PHASES.find(p=>p.id===pid); if(!ph) return false;
-  // Deadline: day before phase start at 23:59 Buenos Aires (UTC-3)
-  // phase start date + T02:59:59Z = 23:59:59 Buenos Aires time the day before
+  if(pid === 'grupos') {
+    // Deadline grupos: 11 jun 12:00 hs Buenos Aires (UTC-3) = 15:00 UTC
+    const d = new Date('2026-06-11T15:00:00Z');
+    return new Date() > d;
+  }
   const d = new Date(ph.start + 'T02:59:59Z');
   return new Date() > d;
 }
@@ -671,7 +674,7 @@ function renderProde() {
   if(locked) {
     html += `<div class="notice red"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Fase cerrada — pronósticos en solo lectura</div>`;
   } else {
-    const ds = deadline.toLocaleDateString('es-AR',{day:'2-digit',month:'long'});
+    const ds = S.phase === 'grupos' ? '11 de junio a las 12:00 hs' : deadline.toLocaleDateString('es-AR',{day:'2-digit',month:'long'});
     html += `<div class="notice amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Cierre: ${ds} a las 23:59 hs</div>`;
   }
 
