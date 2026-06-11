@@ -518,6 +518,7 @@ async function loadDB() {
   DB.paid = paid?.data || {};
   DB.apiKey = config?.apiKey || '';
   DB.registroAbierto = regconfig?.abierto !== undefined ? regconfig.abierto : true;
+  DB.pronosticosAbiertos = regconfig?.pronosticos !== undefined ? regconfig.pronosticos : false;
 }
 async function saveUsers() { await fbSet('users', {data: DB.users}); }
 async function savePicks() { await fbSet('picks', {data: DB.picks}); }
@@ -648,7 +649,8 @@ window.mainTab = (t) => {
 function deadlinePassed(pid) {
   const ph = PHASES.find(p=>p.id===pid); if(!ph) return false;
   if(pid === 'grupos') {
-    // Deadline grupos: 11 jun 12:00 hs Buenos Aires (UTC-3) = 15:00 UTC
+    // If admin manually opened pronosticos, always allow
+    if(DB.pronosticosAbiertos) return false;
     const d = new Date('2026-06-11T15:00:00Z');
     return new Date() > d;
   }
@@ -1120,13 +1122,24 @@ function renderAdminFixture(el) {
   const estadoTexto = DB.registroAbierto ? '✅ Registro ABIERTO' : '🔒 Registro CERRADO';
   const btnTexto = DB.registroAbierto ? 'Cerrar registro' : 'Abrir registro';
   const btnColor = DB.registroAbierto ? '#dc2626' : '#16a34a';
-  
-  let html = `<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+  const pronoColor = DB.pronosticosAbiertos ? '#16a34a' : '#dc2626';
+  const pronoTexto = DB.pronosticosAbiertos ? '✅ Pronósticos ABIERTOS' : '🔒 Pronósticos CERRADOS';
+  const pronoBtnTexto = DB.pronosticosAbiertos ? 'Cerrar pronósticos' : 'Abrir pronósticos';
+  const pronoBtnColor = DB.pronosticosAbiertos ? '#dc2626' : '#16a34a';
+
+  let html = `<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between">
     <div>
-      <div style="font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Estado del registro</div>
+      <div style="font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Registro de usuarios</div>
       <div style="font-size:15px;font-weight:700;color:${estadoColor}">${estadoTexto}</div>
     </div>
     <button onclick="toggleRegistro()" style="padding:8px 16px;background:${btnColor};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">${btnTexto}</button>
+  </div>
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Carga de pronósticos</div>
+      <div style="font-size:15px;font-weight:700;color:${pronoColor}">${pronoTexto}</div>
+    </div>
+    <button onclick="togglePronosticos()" style="padding:8px 16px;background:${pronoBtnColor};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">${pronoBtnTexto}</button>
   </div>`;
   
   PHASES.forEach(ph => {
@@ -1228,9 +1241,15 @@ window.saveResultsPhase = async (pid) => {
   alert('Resultados guardados ✓');
 };
 
+window.togglePronosticos = async () => {
+  DB.pronosticosAbiertos = !DB.pronosticosAbiertos;
+  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos});
+  renderAdmin();
+};
+
 window.toggleRegistro = async () => {
   DB.registroAbierto = !DB.registroAbierto;
-  await fbSet('regconfig', {abierto: DB.registroAbierto});
+  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos});
   renderAdmin();
 };
 
