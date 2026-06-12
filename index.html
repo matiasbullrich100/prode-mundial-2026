@@ -744,14 +744,14 @@ window.savePicksDB = async () => {
 
 function renderRanking() {
   const el = document.getElementById('tab-ranking');
-  // Recargar regconfig para tener picksVisibles actualizado
   fbGet('regconfig').then(regconfig => {
+    alert('regconfig: ' + JSON.stringify(regconfig));
     if(regconfig) {
       DB.picksVisibles = regconfig.picksVisibles === true;
       DB.usuariosHabilitados = regconfig.usuariosHabilitados || {};
     }
     _doRenderRanking(el);
-  }).catch(() => _doRenderRanking(el));
+  }).catch(e => { alert('error: '+e); _doRenderRanking(el); });
 }
 
 function _doRenderRanking(el) {
