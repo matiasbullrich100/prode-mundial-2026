@@ -696,7 +696,8 @@ function renderProde() {
       else ptsBadge = '<span class="pts-badge pts-0">0 pts</span>';
     }
     const resBadge = res !== undefined ? `<span class="real-badge">Real: ${res.h}-${res.a}</span>` : '';
-    html += `<div class="match-card">
+    const cardBg = res !== undefined ? 'background:#e0f2fe;border-color:#7dd3fc;' : '';
+    html += `<div class="match-card" style="${cardBg}">
       <div class="match-teams">
         <div><div class="team-flag">${m.fh}</div><div class="team-name">${m.home}</div></div>
         <div class="vs-col">
