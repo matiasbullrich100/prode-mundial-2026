@@ -786,9 +786,9 @@ function _doRenderRanking(el) {
       const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
       const paid = (DB.paid||{})[s.email];
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
-      const nickStyle = DB.picksVisibles && !isMe ? 'cursor:pointer;text-decoration:underline;text-decoration-style:dotted' : '';
-      const nickClick = DB.picksVisibles && !isMe ? `onclick="verPicksUsuario('${s.email}')"` : '';
-      const verBtn = DB.picksVisibles && !isMe ? `<button onclick="verPicksUsuario('${s.email}')" style="background:none;border:1px solid #d1d5db;border-radius:6px;font-size:11px;padding:2px 7px;cursor:pointer;color:#001a4d;font-family:inherit;margin-left:4px">👁</button>` : '';
+      const nickStyle = (DB.picksVisibles || isAdmin) && !isMe ? 'cursor:pointer;text-decoration:underline;text-decoration-style:dotted' : '';
+      const nickClick = (DB.picksVisibles || isAdmin) && !isMe ? `onclick="verPicksUsuario('${s.email}')"` : '';
+      const verBtn = (DB.picksVisibles || isAdmin) && !isMe ? `<button onclick="verPicksUsuario('${s.email}')" style="background:none;border:1px solid #d1d5db;border-radius:6px;font-size:11px;padding:2px 7px;cursor:pointer;color:#001a4d;font-family:inherit;margin-left:4px">👁</button>` : '';
       html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
         <div class="${posClass}">${medal}</div>
         <div class="rnick" title="${s.email}" ${nickClick} style="${nickStyle}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}${verBtn}</div>
@@ -1064,8 +1064,9 @@ function renderProdeInto(container) {
         else ptsBadge='<span class="pts-badge pts-0">0 pts</span>';
       }
       const resBadge = res!==undefined ? `<span class="real-badge">Real: ${res.h}-${res.a}</span>` : '';
+      const cardClass = res !== undefined ? 'match-card jugado' : 'match-card';
       const fecha=m.fecha||'', hora=m.hora||'', ciudad=m.ciudad||'', estadio=m.estadio||'';
-      html += `<div class="match-card">
+      html += `<div class="${cardClass}">
         <div class="match-info">
           <span>📅 ${fecha}</span>
           ${hora?`<span>🕐 ${hora} hs</span>`:''}
