@@ -1128,9 +1128,10 @@ function renderRankingInto(container) {
       const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
       const paid = (DB.paid||{})[s.email];
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
+      const verBtn = !isMe ? `<button onclick="verPicksUsuario('${s.email}')" style="background:none;border:1px solid #d1d5db;border-radius:6px;font-size:11px;padding:2px 7px;cursor:pointer;color:#001a4d;font-family:inherit;margin-left:4px">👁</button>` : '';
       html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 44px">
         <div class="${posClass}">${medal}</div>
-        <div class="rnick" title="${s.email}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}</div>
+        <div class="rnick" title="${s.email}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}${verBtn}</div>
         <div class="rval">${s.winner}</div>
         <div class="rval">${s.exact}</div>
         <div class="rval pts">${s.total}</div>
