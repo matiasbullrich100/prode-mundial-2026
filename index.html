@@ -81,7 +81,7 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .notice svg{width:15px;height:15px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* MATCH CARDS */
-.match-card{border:1px solid #e5e7eb;border-radius:12px;padding:.75rem .85rem;margin-bottom:.6rem;background:#fff;transition:background .3s,border-color .3s}
+.match-card{border:1px solid #e5e7eb;border-radius:12px;padding:.75rem .85rem;margin-bottom:.6rem;background:var(--mc-bg,#fff);border-color:var(--mc-border,#e5e7eb);transition:background .3s,border-color .3s}
 .match-meta{font-size:11px;font-weight:600;color:#001a4d;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem}
 .match-info{font-size:13px;color:#111;margin-bottom:.6rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .match-info span{display:flex;align-items:center;gap:3px}
@@ -696,7 +696,7 @@ function renderProde() {
       else ptsBadge = '<span class="pts-badge pts-0">0 pts</span>';
     }
     const resBadge = res !== undefined ? `<span class="real-badge">Real: ${res.h}-${res.a}</span>` : '';
-    const cardBg = res !== undefined ? 'background:#e0f2fe !important;border-color:#7dd3fc !important;' : '';
+    const cardBg = res !== undefined ? '--mc-bg:#e0f2fe;--mc-border:#7dd3fc;' : '';
     html += `<div class="match-card" style="${cardBg}">
       <div class="match-teams">
         <div><div class="team-flag">${m.fh}</div><div class="team-name">${m.home}</div></div>
