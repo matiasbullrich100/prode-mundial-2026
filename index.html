@@ -746,10 +746,12 @@ function renderRanking() {
   const el = document.getElementById('tab-ranking');
   // Recargar regconfig para tener picksVisibles actualizado
   fbGet('regconfig').then(regconfig => {
-    DB.picksVisibles = regconfig?.picksVisibles !== undefined ? regconfig.picksVisibles : false;
-    DB.usuariosHabilitados = regconfig?.usuariosHabilitados || {};
+    if(regconfig) {
+      DB.picksVisibles = regconfig.picksVisibles === true;
+      DB.usuariosHabilitados = regconfig.usuariosHabilitados || {};
+    }
     _doRenderRanking(el);
-  });
+  }).catch(() => _doRenderRanking(el));
 }
 
 function _doRenderRanking(el) {
@@ -1342,7 +1344,9 @@ window.toggleRegistro = async () => {
 
 window.togglePicksVisibles = async () => {
   DB.picksVisibles = !DB.picksVisibles;
-  await fbSet('regconfig', {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos, picksVisibles: DB.picksVisibles, usuariosHabilitados: DB.usuariosHabilitados});
+  const dataToSave = {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos, picksVisibles: DB.picksVisibles, usuariosHabilitados: DB.usuariosHabilitados};
+  await fbSet('regconfig', dataToSave);
+  alert('picksVisibles guardado: ' + DB.picksVisibles);
   renderAdmin();
 };
 
