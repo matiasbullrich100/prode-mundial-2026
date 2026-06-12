@@ -744,6 +744,15 @@ window.savePicksDB = async () => {
 
 function renderRanking() {
   const el = document.getElementById('tab-ranking');
+  // Recargar regconfig para tener picksVisibles actualizado
+  fbGet('regconfig').then(regconfig => {
+    DB.picksVisibles = regconfig?.picksVisibles !== undefined ? regconfig.picksVisibles : false;
+    DB.usuariosHabilitados = regconfig?.usuariosHabilitados || {};
+    _doRenderRanking(el);
+  });
+}
+
+function _doRenderRanking(el) {
   const isAdmin = DB.users[S.cur]?.isAdmin || false;
   const users = Object.entries(DB.users);
   const scores = users.map(([email,u])=>({nick:u.nick,email,...userScore(email)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
