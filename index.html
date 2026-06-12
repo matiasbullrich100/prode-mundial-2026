@@ -809,36 +809,46 @@ function _doRenderRanking(el) {
 window.verPicksUsuario = (email) => {
   const u = DB.users[email];
   const picks = DB.picks[email] || {};
+
+  // Juntar todos los partidos de todas las fases y ordenar por fecha
+  const allMatches = [];
+  PHASES.forEach(ph => {
+    const matches = DB.fixture[ph.id] || [];
+    const res = DB.results[ph.id] || {};
+    matches.forEach(m => {
+      if(picks[m.id]) allMatches.push({...m, phaseId: ph.id, phName: ph.name, res: res[m.id]});
+    });
+  });
+  allMatches.sort((a,b) => {
+    const da = new Date((a.fecha||'9999-12-31') + 'T' + (a.hora||'00') + ':00');
+    const db2 = new Date((b.fecha||'9999-12-31') + 'T' + (b.hora||'00') + ':00');
+    return da - db2;
+  });
+
   let html = `<div style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto" onclick="if(event.target===this)this.remove()">
     <div style="background:#fff;border-radius:16px;width:100%;max-width:480px;padding:1.25rem;margin:auto">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
         <div style="font-size:17px;font-weight:700;color:#001a4d">⚽ Pronósticos de ${u?.nick||email}</div>
         <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#6b7280">✕</button>
       </div>`;
-  PHASES.forEach(ph => {
-    const matches = DB.fixture[ph.id] || [];
-    const res = DB.results[ph.id] || {};
-    const anyPick = matches.some(m => picks[m.id]);
-    if(!anyPick) return;
-    html += `<div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:.75rem 0 .4rem">${ph.name}</div>`;
-    matches.forEach(m => {
-      const pk = picks[m.id];
-      if(!pk) return;
-      const r = res[m.id];
-      const correct = r ? (pk.h === r.h && pk.a === r.a) : null;
-      const winnerOk = r ? ((pk.h > pk.a) === (r.h > r.a) && (pk.h < pk.a) === (r.h < r.a) && (pk.h === pk.a) === (r.h === r.a)) : null;
-      let bg = '#f9fafb';
-      if(correct === true) bg = '#dcfce7';
-      else if(winnerOk === true) bg = '#fef9c3';
-      else if(r && !winnerOk) bg = '#fee2e2';
-      html += `<div style="display:flex;align-items:center;padding:.4rem .6rem;border-radius:8px;margin-bottom:.3rem;background:${bg}">
-        <div style="font-size:12px;color:#374151;flex:1;text-align:right">${m.home}</div>
-        <div style="font-size:14px;font-weight:700;color:#001a4d;margin:0 .6rem;white-space:nowrap">${pk.h} - ${pk.a}</div>
-        <div style="font-size:12px;color:#374151;flex:1">${m.away}</div>
-        ${r ? `<div style="font-size:10px;color:#6b7280;margin-left:.4rem">(${r.h}-${r.a})</div>` : ''}
-      </div>`;
-    });
+
+  allMatches.forEach(m => {
+    const pk = picks[m.id];
+    const r = m.res;
+    const correct = r ? (pk.h === r.h && pk.a === r.a) : null;
+    const winnerOk = r ? ((pk.h > pk.a) === (r.h > r.a) && (pk.h < pk.a) === (r.h < r.a) && (pk.h === pk.a) === (r.h === r.a)) : null;
+    let bg = '#f9fafb';
+    if(correct === true) bg = '#dcfce7';
+    else if(winnerOk === true) bg = '#fef9c3';
+    else if(r && !winnerOk) bg = '#fee2e2';
+    html += `<div style="display:flex;align-items:center;padding:.4rem .6rem;border-radius:8px;margin-bottom:.3rem;background:${bg}">
+      <div style="font-size:12px;color:#374151;flex:1;text-align:right">${m.home}</div>
+      <div style="font-size:14px;font-weight:700;color:#001a4d;margin:0 .6rem;white-space:nowrap">${pk.h} - ${pk.a}</div>
+      <div style="font-size:12px;color:#374151;flex:1">${m.away}</div>
+      ${r ? `<div style="font-size:10px;color:#6b7280;margin-left:.4rem">(${r.h}-${r.a})</div>` : ''}
+    </div>`;
   });
+
   html += `<div style="font-size:11px;color:#6b7280;text-align:center;margin-top:.75rem">Verde = exacto · Amarillo = ganador · Rojo = error</div>
     </div></div>`;
   const div = document.createElement('div');
