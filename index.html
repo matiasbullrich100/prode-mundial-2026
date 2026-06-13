@@ -1314,38 +1314,54 @@ function renderAdminResults(el) {
   } else {
     html += `<div class="notice amber" style="margin-bottom:.85rem"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Sin API Key — cargá resultados manualmente</div>`;
   }
+
+  const ORDEN_CRONO = {'g1':0,'g2':1,'g7':2,'g19':3,'g8':4,'g13':5,'g14':6,'g20':7,'g25':8,'g31':9,'g26':10,'g32':11,'g43':12,'g37':13,'g44':14,'g38':15,'g56':16,'g49':17,'g50':18,'g55':19,'g61':20,'g67':21,'g68':22,'g62':23,'g3':24,'g9':25,'g10':26,'g4':27,'g22':28,'g21':29,'g15':30,'g16':31,'g34':32,'g33':33,'g27':34,'g28':35,'g45':36,'g39':37,'g46':38,'g40':39,'g58':40,'g57':41,'g51':42,'g52':43,'g63':44,'g69':45,'g70':46,'g64':47,'g11':48,'g12':49,'g5':50,'g6':51,'g23':52,'g24':53,'g17':54,'g18':55,'g35':56,'g36':57,'g29':58,'g30':59,'g47':60,'g48':61,'g41':62,'g42':63,'g59':64,'g60':65,'g53':66,'g54':67,'g71':68,'g72':69,'g65':70,'g66':71};
+  const allMatches = [];
   PHASES.forEach(ph => {
     const matches = DB.fixture[ph.id] || [];
     const res = DB.results[ph.id] || {};
-    html += `<div style="margin-bottom:1.1rem"><div class="phase-lbl">${ph.name}</div><div class="admin-block">`;
-    matches.forEach(m => {
-      const r = res[m.id] || {h:'',a:''};
-      html += `<div class="admin-match">
-        <div style="font-size:13px;font-weight:600;color:#111">${m.home}</div>
-        <div class="score-row" style="gap:4px">
-          <input type="number" min="0" max="20" value="${r.h}" id="rh_${m.id}" inputmode="numeric">
-          <span class="score-sep" style="font-size:13px">-</span>
-          <input type="number" min="0" max="20" value="${r.a}" id="ra_${m.id}" inputmode="numeric">
-        </div>
-        <div style="font-size:13px;font-weight:600;text-align:right;color:#111">${m.away}</div>
-      </div>`;
-    });
-    html += `</div><button class="green-btn" onclick="saveResultsPhase('${ph.id}')">
-      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Guardar ${ph.name}
-    </button></div>`;
+    matches.forEach(m => allMatches.push({...m, phaseId: ph.id, res: res[m.id]}));
   });
+  allMatches.sort((a,b) => {
+    const aJugado = a.res !== undefined;
+    const bJugado = b.res !== undefined;
+    if(aJugado !== bJugado) return aJugado ? -1 : 1;
+    return (ORDEN_CRONO[a.id]??999) - (ORDEN_CRONO[b.id]??999);
+  });
+
+  html += `<div class="admin-block">`;
+  allMatches.forEach(m => {
+    const r = m.res || {h:'',a:''};
+    const jugado = m.res !== undefined;
+    html += `<div class="admin-match" style="${jugado?'background:#e0f2fe;border-radius:8px;padding:4px 6px;margin-bottom:4px':''}">
+      <div style="font-size:13px;font-weight:600;color:#111">${m.home}</div>
+      <div class="score-row" style="gap:4px">
+        <input type="number" min="0" max="20" value="${r.h}" id="rh_${m.id}" inputmode="numeric">
+        <span class="score-sep" style="font-size:13px">-</span>
+        <input type="number" min="0" max="20" value="${r.a}" id="ra_${m.id}" inputmode="numeric">
+      </div>
+      <div style="font-size:13px;font-weight:600;text-align:right;color:#111">${m.away}</div>
+    </div>`;
+  });
+  html += `</div>
+  <button class="green-btn" style="margin-top:.75rem" onclick="saveAllResults()">
+    <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Guardar resultados
+  </button>`;
   el.innerHTML = html;
 }
 
-window.saveResultsPhase = async (pid) => {
-  if(!DB.results[pid]) DB.results[pid]={};
-  (DB.fixture[pid]||[]).forEach(m => {
-    const h=document.getElementById('rh_'+m.id), a=document.getElementById('ra_'+m.id);
-    if(h && a && h.value!=='' && a.value!=='') DB.results[pid][m.id]={h:parseInt(h.value),a:parseInt(a.value)};
+window.saveAllResults = async () => {
+  PHASES.forEach(ph => {
+    if(!DB.results[ph.id]) DB.results[ph.id] = {};
+    (DB.fixture[ph.id]||[]).forEach(m => {
+      const h = document.getElementById('rh_'+m.id), a = document.getElementById('ra_'+m.id);
+      if(h && a && h.value!=='' && a.value!=='') DB.results[ph.id][m.id] = {h:parseInt(h.value), a:parseInt(a.value)};
+    });
   });
   await saveResults();
   alert('Resultados guardados ✓');
+  renderAdmin();
 };
 
 window.togglePronosticos = async () => {
