@@ -670,19 +670,27 @@ function renderProde() {
 
   // Juntar todos los partidos de todas las fases
   const allMatches = [];
-  let globalIndex = 0;
+  const mesMap = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+  const fechaISO = (fecha, hora) => {
+    if(!fecha) return '9999-12-31T99:99';
+    const parts = fecha.trim().split(' ');
+    const dia = parts[parts.length-2]?.padStart(2,'0') || '01';
+    const mesStr = parts[parts.length-1]?.toLowerCase().substring(0,3) || 'jan';
+    const mes = mesMap[mesStr] || '06';
+    return `2026-${mes}-${dia}T${hora||'00:00'}`;
+  };
   PHASES.forEach(ph => {
     const matches = DB.fixture[ph.id] || [];
     const results = DB.results[ph.id] || {};
     const phaseLocked = deadlinePassed(ph.id);
-    matches.forEach(m => allMatches.push({...m, phaseId: ph.id, results, phaseLocked, _idx: globalIndex++}));
+    matches.forEach(m => allMatches.push({...m, phaseId: ph.id, results, phaseLocked}));
   });
-  // Primero los jugados (con resultado), luego los no jugados, ambos en orden original del fixture
+  // Primero los jugados (con resultado), luego los no jugados, ambos en orden cronológico real
   allMatches.sort((a,b) => {
-    const aJugado = a.results[a.id] !== undefined ? 0 : 1;
-    const bJugado = b.results[b.id] !== undefined ? 0 : 1;
-    if(aJugado !== bJugado) return aJugado - bJugado;
-    return a._idx - b._idx;
+    const aJugado = a.results[a.id] !== undefined;
+    const bJugado = b.results[b.id] !== undefined;
+    if(aJugado !== bJugado) return aJugado ? -1 : 1;
+    return fechaISO(a.fecha, a.hora).localeCompare(fechaISO(b.fecha, b.hora));
   });
 
   let html = '';
