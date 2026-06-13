@@ -1047,69 +1047,66 @@ window.adminTab = (t) => {
 };
 
 function renderProdeInto(container) {
-  // Create a temp div and render prode into it
   const div = document.createElement('div');
   container.appendChild(div);
-  // Reuse renderProde but target admin content
   const picks = DB.picks[S.cur] || {};
-  const ph = PHASES.find(p=>p.id===S.phase);
-  const deadline = new Date(ph.start); deadline.setDate(deadline.getDate()-1);
-  const locked = deadlinePassed(S.phase);
-  const results = DB.results[S.phase] || {};
-
-  let html = '<div class="phase-strip">';
-  PHASES.forEach(p => {
-    if((DB.fixture[p.id]||[]).length>0)
-      html += `<button class="phase-pill${p.id===S.phase?' active':''}" onclick="setPhase('${p.id}')">${p.name}</button>`;
+  const ORDEN_CRONO = {'g1':0,'g2':1,'g7':2,'g19':3,'g8':4,'g13':5,'g14':6,'g20':7,'g25':8,'g31':9,'g26':10,'g32':11,'g43':12,'g37':13,'g44':14,'g38':15,'g56':16,'g49':17,'g50':18,'g55':19,'g61':20,'g67':21,'g68':22,'g62':23,'g3':24,'g9':25,'g10':26,'g4':27,'g22':28,'g21':29,'g15':30,'g16':31,'g34':32,'g33':33,'g27':34,'g28':35,'g45':36,'g39':37,'g46':38,'g40':39,'g58':40,'g57':41,'g51':42,'g52':43,'g63':44,'g69':45,'g70':46,'g64':47,'g11':48,'g12':49,'g5':50,'g6':51,'g23':52,'g24':53,'g17':54,'g18':55,'g35':56,'g36':57,'g29':58,'g30':59,'g47':60,'g48':61,'g41':62,'g42':63,'g59':64,'g60':65,'g53':66,'g54':67,'g71':68,'g72':69,'g65':70,'g66':71};
+  const allMatches = [];
+  PHASES.forEach(ph => {
+    const matches = DB.fixture[ph.id] || [];
+    const results = DB.results[ph.id] || {};
+    const phaseLocked = deadlinePassed(ph.id);
+    matches.forEach(m => allMatches.push({...m, phaseId: ph.id, results, phaseLocked}));
   });
-  html += '</div>';
-
-  const matches = DB.fixture[S.phase] || [];
-  const grouped = {};
-  matches.forEach(m => { const g = m.grupo||'Sin grupo'; if(!grouped[g]) grouped[g]=[]; grouped[g].push(m); });
-
-  Object.entries(grouped).forEach(([grupo, gmatches]) => {
-    if(S.phase==='grupos') html += `<div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:.85rem 0 .4rem">${grupo}</div>`;
-    gmatches.forEach(m => {
-      const pk = picks[m.id]||{h:'',a:''};
-      const res = results[m.id];
-      let ptsBadge = '';
-      if(res!==undefined && pk.h!=='') {
-        const pts = calcPts(pk,res);
-        if(pts===4) ptsBadge='<span class="pts-badge pts-4">+4 pts</span>';
-        else if(pts===2) ptsBadge='<span class="pts-badge pts-2">+2 pts</span>';
-        else ptsBadge='<span class="pts-badge pts-0">0 pts</span>';
-      }
-      const resBadge = res!==undefined ? `<span class="real-badge">Real: ${res.h}-${res.a}</span>` : '';
-      const cardClass = res !== undefined ? 'match-card jugado' : 'match-card';
-      const fecha=m.fecha||'', hora=m.hora||'', ciudad=m.ciudad||'', estadio=m.estadio||'';
-      html += `<div class="${cardClass}">
-        <div class="match-info">
-          <span>📅 ${fecha}</span>
-          ${hora?`<span>🕐 ${hora} hs</span>`:''}
-          ${ciudad?`<span>📍 ${ciudad}</span>`:''}
-        </div>
-        ${estadio?`<div style="font-size:13px;color:#111;margin-bottom:.5rem;font-weight:500">🏟 ${estadio}</div>`:''}
-        <div style="display:grid;grid-template-columns:1fr auto">
-          <div>
-            <div class="match-team-row"><span class="team-flag">${m.fh}</span><span class="team-name">${m.home}</span></div>
-            <div class="match-team-row"><span class="team-flag">${m.fa}</span><span class="team-name">${m.away}</span></div>
-          </div>
-          <div class="score-col">
-            ${locked||res!==undefined
-              ? `<div style="font-size:17px;font-weight:700;color:#111;text-align:center">${pk.h!==''?pk.h:'—'}</div>
-                 <div style="font-size:17px;font-weight:700;color:#111;text-align:center;border-top:1px solid #f3f4f6;padding-top:4px">${pk.a!==''?pk.a:'—'}</div>`
-              : `<input type="number" min="0" max="20" value="${pk.h}" id="h_${m.id}" inputmode="numeric" style="width:40px;height:34px;text-align:center;font-size:16px;font-weight:700;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit;margin-bottom:4px">
-                 <input type="number" min="0" max="20" value="${pk.a}" id="a_${m.id}" inputmode="numeric" style="width:40px;height:34px;text-align:center;font-size:16px;font-weight:700;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit">`
-            }
-          </div>
-        </div>
-        <div class="match-footer" style="margin-top:.4rem">${ptsBadge}${resBadge}</div>
-      </div>`;
-    });
+  allMatches.sort((a,b) => {
+    const aJugado = a.results[a.id] !== undefined;
+    const bJugado = b.results[b.id] !== undefined;
+    if(aJugado !== bJugado) return aJugado ? -1 : 1;
+    return (ORDEN_CRONO[a.id]??999) - (ORDEN_CRONO[b.id]??999);
   });
 
-  if(!locked) {
+  let html = '';
+  allMatches.forEach(m => {
+    const pk = picks[m.id]||{h:'',a:''};
+    const res = m.results[m.id];
+    const locked = m.phaseLocked;
+    let ptsBadge = '';
+    if(res!==undefined && pk.h!=='') {
+      const pts = calcPts(pk,res);
+      if(pts===4) ptsBadge='<span class="pts-badge pts-4">+4 pts</span>';
+      else if(pts===2) ptsBadge='<span class="pts-badge pts-2">+2 pts</span>';
+      else ptsBadge='<span class="pts-badge pts-0">0 pts</span>';
+    }
+    const resBadge = res!==undefined ? `<span class="real-badge">Real: ${res.h}-${res.a}</span>` : '';
+    const cardClass = res !== undefined ? 'match-card jugado' : 'match-card';
+    const fecha=m.fecha||'', hora=m.hora||'', ciudad=m.ciudad||'', estadio=m.estadio||'';
+    html += `<div class="${cardClass}">
+      <div class="match-info">
+        <span>📅 ${fecha}</span>
+        ${hora?`<span>🕐 ${hora} hs</span>`:''}
+        ${ciudad?`<span>📍 ${ciudad}</span>`:''}
+      </div>
+      ${estadio?`<div style="font-size:13px;color:#111;margin-bottom:.5rem;font-weight:500">🏟 ${estadio}</div>`:''}
+      <div style="display:grid;grid-template-columns:1fr auto">
+        <div>
+          <div class="match-team-row"><span class="team-flag">${m.fh}</span><span class="team-name">${m.home}</span></div>
+          <div class="match-team-row"><span class="team-flag">${m.fa}</span><span class="team-name">${m.away}</span></div>
+        </div>
+        <div class="score-col">
+          ${locked||res!==undefined
+            ? `<div style="font-size:17px;font-weight:700;color:#111;text-align:center">${pk.h!==''?pk.h:'—'}</div>
+               <div style="font-size:17px;font-weight:700;color:#111;text-align:center;border-top:1px solid #f3f4f6;padding-top:4px">${pk.a!==''?pk.a:'—'}</div>`
+            : `<input type="number" min="0" max="20" value="${pk.h}" id="h_${m.id}" inputmode="numeric" style="width:40px;height:34px;text-align:center;font-size:16px;font-weight:700;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit;margin-bottom:4px">
+               <input type="number" min="0" max="20" value="${pk.a}" id="a_${m.id}" inputmode="numeric" style="width:40px;height:34px;text-align:center;font-size:16px;font-weight:700;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit">`
+          }
+        </div>
+      </div>
+      <div class="match-footer" style="margin-top:.4rem">${ptsBadge}${resBadge}</div>
+    </div>`;
+  });
+
+  const anyUnlocked = allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
+  if(anyUnlocked) {
     html += `<button class="save-btn" onclick="savePicksDB()">Guardar pronósticos</button>
     <div class="save-ok" id="save-ok">✓ Pronósticos guardados</div>`;
   }
