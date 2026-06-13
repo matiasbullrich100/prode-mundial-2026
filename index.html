@@ -666,30 +666,28 @@ function deadlinePassed(pid) {
 function renderProde() {
   const el = document.getElementById('tab-prode');
   const picks = DB.picks[S.cur] || {};
-  const ph = PHASES.find(p=>p.id===S.phase);
-  const deadline = new Date(ph.start); deadline.setDate(deadline.getDate()-1);
-  const locked = deadlinePassed(S.phase);
-  const results = DB.results[S.phase] || {};
-  console.log('DEBUG renderProde results:', S.phase, JSON.stringify(results).substring(0,300));
+  const locked = PHASES.every(p => deadlinePassed(p.id));
 
-  let html = '<div class="phase-strip">';
-  PHASES.forEach(p => {
-    if((DB.fixture[p.id]||[]).length>0)
-      html += `<button class="phase-pill${p.id===S.phase?' active':''}" onclick="setPhase('${p.id}')">${p.name}</button>`;
+  // Juntar todos los partidos de todas las fases en orden cronológico
+  const allMatches = [];
+  PHASES.forEach(ph => {
+    const matches = DB.fixture[ph.id] || [];
+    const results = DB.results[ph.id] || {};
+    const phaseLocked = deadlinePassed(ph.id);
+    matches.forEach(m => allMatches.push({...m, phaseId: ph.id, results, phaseLocked}));
   });
-  html += '</div>';
+  allMatches.sort((a,b) => {
+    const da = new Date((a.fecha||'9999-12-31') + 'T' + (a.hora||'00') + ':00');
+    const db2 = new Date((b.fecha||'9999-12-31') + 'T' + (b.hora||'00') + ':00');
+    return da - db2;
+  });
 
-  if(locked) {
-    html += `<div class="notice red"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Fase cerrada — pronósticos en solo lectura</div>`;
-  } else {
-    const ds = S.phase === 'grupos' ? '11 de junio a las 12:00 hs' : deadline.toLocaleDateString('es-AR',{day:'2-digit',month:'long'});
-    html += `<div class="notice amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Cierre: ${ds} a las 23:59 hs</div>`;
-  }
+  let html = '';
 
-  const matches = DB.fixture[S.phase] || [];
-  matches.forEach(m => {
+  allMatches.forEach(m => {
     const pk = picks[m.id] || {h:'',a:''};
-    const res = results[m.id];
+    const res = m.results[m.id];
+    const phaseLocked = m.phaseLocked;
     let ptsBadge = '';
     if(res !== undefined && pk.h !== '') {
       const pts = calcPts(pk, res);
@@ -700,10 +698,13 @@ function renderProde() {
     const resBadge = res !== undefined ? `<span class="real-badge">Real: ${res.h}-${res.a}</span>` : '';
     const cardClass = res !== undefined ? 'match-card jugado' : 'match-card';
     html += `<div class="${cardClass}">
+      <div class="match-header-info" style="font-size:11px;color:#6b7280;margin-bottom:.35rem">
+        📅 ${m.fecha||''} &nbsp;⏰ ${m.hora||''}hs &nbsp;📍 ${m.ciudad||''}
+      </div>
       <div class="match-teams">
         <div><div class="team-flag">${m.fh}</div><div class="team-name">${m.home}</div></div>
         <div class="vs-col">
-          ${locked || res !== undefined
+          ${phaseLocked || res !== undefined
             ? `<div class="static-score">${pk.h!=='' ? pk.h+'-'+pk.a : '—'}</div>`
             : `<div class="score-row">
                 <input type="number" min="0" max="20" value="${pk.h}" id="h_${m.id}" inputmode="numeric">
@@ -718,7 +719,8 @@ function renderProde() {
     </div>`;
   });
 
-  if(!locked) {
+  const anyUnlocked = allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
+  if(anyUnlocked) {
     html += `<button class="save-btn" onclick="savePicksDB()">
       <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       Guardar pronósticos
@@ -731,12 +733,14 @@ function renderProde() {
 window.setPhase = (pid) => { S.phase = pid; renderProde(); };
 
 window.savePicksDB = async () => {
-  const matches = DB.fixture[S.phase] || [];
   if(!DB.picks[S.cur]) DB.picks[S.cur] = {};
-  matches.forEach(m => {
-    const h = document.getElementById('h_'+m.id), a = document.getElementById('a_'+m.id);
-    if(h && a && h.value !== '' && a.value !== '')
-      DB.picks[S.cur][m.id] = {h:parseInt(h.value), a:parseInt(a.value)};
+  PHASES.forEach(ph => {
+    const matches = DB.fixture[ph.id] || [];
+    matches.forEach(m => {
+      const h = document.getElementById('h_'+m.id), a = document.getElementById('a_'+m.id);
+      if(h && a && h.value !== '' && a.value !== '')
+        DB.picks[S.cur][m.id] = {h:parseInt(h.value), a:parseInt(a.value)};
+    });
   });
   await savePicks();
   const ok = document.getElementById('save-ok');
