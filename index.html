@@ -668,18 +668,21 @@ function renderProde() {
   const picks = DB.picks[S.cur] || {};
   const locked = PHASES.every(p => deadlinePassed(p.id));
 
-  // Juntar todos los partidos de todas las fases en orden cronológico
+  // Juntar todos los partidos de todas las fases
   const allMatches = [];
+  let globalIndex = 0;
   PHASES.forEach(ph => {
     const matches = DB.fixture[ph.id] || [];
     const results = DB.results[ph.id] || {};
     const phaseLocked = deadlinePassed(ph.id);
-    matches.forEach(m => allMatches.push({...m, phaseId: ph.id, results, phaseLocked}));
+    matches.forEach(m => allMatches.push({...m, phaseId: ph.id, results, phaseLocked, _idx: globalIndex++}));
   });
+  // Primero los jugados (con resultado), luego los no jugados, ambos en orden original del fixture
   allMatches.sort((a,b) => {
-    const da = new Date((a.fecha||'9999-12-31') + 'T' + (a.hora||'00') + ':00');
-    const db2 = new Date((b.fecha||'9999-12-31') + 'T' + (b.hora||'00') + ':00');
-    return da - db2;
+    const aJugado = a.results[a.id] !== undefined ? 0 : 1;
+    const bJugado = b.results[b.id] !== undefined ? 0 : 1;
+    if(aJugado !== bJugado) return aJugado - bJugado;
+    return a._idx - b._idx;
   });
 
   let html = '';
