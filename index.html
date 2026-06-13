@@ -670,15 +670,7 @@ function renderProde() {
 
   // Juntar todos los partidos de todas las fases
   const allMatches = [];
-  const mesMap = {jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
-  const fechaISO = (fecha, hora) => {
-    if(!fecha) return '9999-12-31T99:99';
-    const parts = fecha.trim().split(' ');
-    const dia = parts[parts.length-2]?.padStart(2,'0') || '01';
-    const mesStr = parts[parts.length-1]?.toLowerCase().substring(0,3) || 'jan';
-    const mes = mesMap[mesStr] || '06';
-    return `2026-${mes}-${dia}T${hora||'00:00'}`;
-  };
+  const ORDEN_CRONO = {'g1':0,'g2':1,'g7':2,'g19':3,'g8':4,'g13':5,'g14':6,'g20':7,'g25':8,'g31':9,'g26':10,'g32':11,'g43':12,'g37':13,'g44':14,'g38':15,'g56':16,'g49':17,'g50':18,'g55':19,'g61':20,'g67':21,'g68':22,'g62':23,'g3':24,'g9':25,'g10':26,'g4':27,'g22':28,'g21':29,'g15':30,'g16':31,'g34':32,'g33':33,'g27':34,'g28':35,'g45':36,'g39':37,'g46':38,'g40':39,'g58':40,'g57':41,'g51':42,'g52':43,'g63':44,'g69':45,'g70':46,'g64':47,'g11':48,'g12':49,'g5':50,'g6':51,'g23':52,'g24':53,'g17':54,'g18':55,'g35':56,'g36':57,'g29':58,'g30':59,'g47':60,'g48':61,'g41':62,'g42':63,'g59':64,'g60':65,'g53':66,'g54':67,'g71':68,'g72':69,'g65':70,'g66':71};
   PHASES.forEach(ph => {
     const matches = DB.fixture[ph.id] || [];
     const results = DB.results[ph.id] || {};
@@ -690,7 +682,7 @@ function renderProde() {
     const aJugado = a.results[a.id] !== undefined;
     const bJugado = b.results[b.id] !== undefined;
     if(aJugado !== bJugado) return aJugado ? -1 : 1;
-    return fechaISO(a.fecha, a.hora).localeCompare(fechaISO(b.fecha, b.hora));
+    return (ORDEN_CRONO[a.id]??999) - (ORDEN_CRONO[b.id]??999);
   });
 
   let html = '';
