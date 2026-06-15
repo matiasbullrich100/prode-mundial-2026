@@ -120,7 +120,7 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .divider{height:1px;background:#e5e7eb;margin:.85rem 0}
 .rank-table{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden}
 .rank-header{display:grid;grid-template-columns:28px 1fr 36px 44px 44px 48px 44px;gap:2px;padding:.6rem .6rem;background:#f9fafb;border-bottom:1px solid #e5e7eb}
-.rank-header span{font-size:10px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.3px;text-align:center}
+.rank-header span{font-size:10px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.3px;text-align:center;white-space:normal;line-height:1.2}
 .rank-header span:nth-child(2){text-align:left}
 .rank-row{display:grid;grid-template-columns:28px 1fr 36px 44px 44px 48px 44px;gap:2px;align-items:center;padding:.55rem .6rem;border-bottom:1px solid #f3f4f6}
 .rank-row:last-child{border-bottom:none}
@@ -783,7 +783,7 @@ function _doRenderRanking(el) {
   <div class="divider"></div>
   <div class="rank-table">
     <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span>
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exact.</span><span>Errad.</span><span>Efect.</span><span>Pts</span>
     </div>`;
 
   if(scores.length===0) {
@@ -1133,7 +1133,7 @@ function renderRankingInto(container) {
   <div class="divider"></div>
   <div class="rank-table">
     <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span>
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exact.</span><span>Errad.</span><span>Efect.</span><span>Pts</span>
     </div>`;
 
   if(scores.length === 0) {
