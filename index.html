@@ -611,16 +611,18 @@ function calcPts(pk, res) {
 
 function userScore(email) {
   const picks = DB.picks[email] || {};
-  let total=0, exact=0, winner=0, errados=0;
+  let total=0, exact=0, winner=0, errados=0, jugados=0;
   PHASES.forEach(ph => {
     const res = DB.results[ph.id] || {};
     Object.keys(res).forEach(mid => {
       const pk = picks[mid]; if(!pk) return;
       const pts = calcPts(pk, res[mid]);
       total+=pts; if(pts===4) exact++; if(pts>=2) winner++; if(pts===0) errados++;
+      jugados++;
     });
   });
-  return {total, exact, winner, errados};
+  const efectividad = jugados > 0 ? Math.round(total / (jugados * 4) * 100) : 0;
+  return {total, exact, winner, errados, efectividad};
 }
 
 function initMain() {
@@ -780,8 +782,8 @@ function _doRenderRanking(el) {
   </div>
   <div class="divider"></div>
   <div class="rank-table">
-    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px 52px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Pts</span><span>Pagó</span>
+    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px 60px 52px 44px">
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span><span>Pagó</span>
     </div>`;
 
   if(scores.length===0) {
@@ -796,12 +798,13 @@ function _doRenderRanking(el) {
       const nickStyle = (DB.picksVisibles || isAdmin) && !isMe ? 'cursor:pointer;text-decoration:underline;text-decoration-style:dotted' : '';
       const nickClick = (DB.picksVisibles || isAdmin) && !isMe ? `onclick="verPicksUsuario('${s.email}')"` : '';
       const verBtn = (DB.picksVisibles || isAdmin) && !isMe ? `<button onclick="verPicksUsuario('${s.email}')" style="background:none;border:1px solid #d1d5db;border-radius:6px;font-size:11px;padding:2px 7px;cursor:pointer;color:#001a4d;font-family:inherit;margin-left:4px">👁</button>` : '';
-      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 52px 44px">
+      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 60px 52px 44px">
         <div class="${posClass}">${medal}</div>
         <div class="rnick" title="${s.email}" ${nickClick} style="${nickStyle}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}${verBtn}</div>
         <div class="rval">${s.winner}</div>
         <div class="rval">${s.exact}</div>
         <div class="rval" style="color:#dc2626">${s.errados}</div>
+        <div class="rval" style="color:#0369a1">${s.efectividad}%</div>
         <div class="rval pts">${s.total}</div>
         <div class="rval">${paidIcon}</div>
       </div>`;
@@ -1130,8 +1133,8 @@ function renderRankingInto(container) {
   </div>
   <div class="divider"></div>
   <div class="rank-table">
-    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px 52px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Pts</span><span>Pagó</span>
+    <div class="rank-header" style="grid-template-columns:32px 1fr 44px 52px 52px 60px 52px 44px">
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span><span>Pagó</span>
     </div>`;
 
   if(scores.length === 0) {
@@ -1144,12 +1147,13 @@ function renderRankingInto(container) {
       const paid = (DB.paid||{})[s.email];
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
       const verBtn = !isMe ? `<button onclick="verPicksUsuario('${s.email}')" style="background:none;border:1px solid #d1d5db;border-radius:6px;font-size:11px;padding:2px 7px;cursor:pointer;color:#001a4d;font-family:inherit;margin-left:4px">👁</button>` : '';
-      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 52px 44px">
+      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:32px 1fr 44px 52px 52px 60px 52px 44px">
         <div class="${posClass}">${medal}</div>
         <div class="rnick" title="${s.email}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}${verBtn}</div>
         <div class="rval">${s.winner}</div>
         <div class="rval">${s.exact}</div>
         <div class="rval" style="color:#dc2626">${s.errados}</div>
+        <div class="rval" style="color:#0369a1">${s.efectividad}%</div>
         <div class="rval pts">${s.total}</div>
         <div class="rval">${paidIcon}</div>
       </div>`;
