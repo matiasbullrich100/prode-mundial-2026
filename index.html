@@ -120,7 +120,7 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .divider{height:1px;background:#e5e7eb;margin:.85rem 0}
 .rank-table{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden}
 .rank-header{display:grid;grid-template-columns:28px 1fr 36px 44px 44px 48px 44px;gap:2px;padding:.6rem .6rem;background:#f9fafb;border-bottom:1px solid #e5e7eb}
-.rank-header span{font-size:10px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.3px;text-align:center;white-space:normal;line-height:1.2}
+.rank-header span{font-size:10px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.3px;text-align:center}
 .rank-header span:nth-child(2){text-align:left}
 .rank-row{display:grid;grid-template-columns:28px 1fr 36px 44px 44px 48px 44px;gap:2px;align-items:center;padding:.55rem .6rem;border-bottom:1px solid #f3f4f6}
 .rank-row:last-child{border-bottom:none}
@@ -756,7 +756,6 @@ window.savePicksDB = async () => {
 function renderRanking() {
   const el = document.getElementById('tab-ranking');
   fbGet('regconfig').then(regconfig => {
-    alert('regconfig: ' + JSON.stringify(regconfig));
     if(regconfig) {
       DB.picksVisibles = regconfig.picksVisibles === true;
       DB.usuariosHabilitados = regconfig.usuariosHabilitados || {};
@@ -783,7 +782,7 @@ function _doRenderRanking(el) {
   <div class="divider"></div>
   <div class="rank-table">
     <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
-      <span>#</span><span>Apodo</span><span>Acer-<br>tados</span><span>Exac-<br>tos</span><span>Erra-<br>dos</span><span>Efec-<br>tividad</span><span>Pts</span>
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span>
     </div>`;
 
   if(scores.length===0) {
@@ -829,8 +828,11 @@ window.verPicksUsuario = (email) => {
       if(picks[m.id]) allMatches.push({...m, phaseId: ph.id, phName: ph.name, res: res[m.id]});
     });
   });
-  const ORDEN_CRONO = {'g1':0,'g2':1,'g7':2,'g19':3,'g8':4,'g13':5,'g14':6,'g20':7,'g25':8,'g31':9,'g26':10,'g32':11,'g43':12,'g37':13,'g44':14,'g38':15,'g56':16,'g49':17,'g50':18,'g55':19,'g61':20,'g67':21,'g68':22,'g62':23,'g3':24,'g9':25,'g10':26,'g4':27,'g22':28,'g21':29,'g15':30,'g16':31,'g34':32,'g33':33,'g27':34,'g28':35,'g45':36,'g39':37,'g46':38,'g40':39,'g58':40,'g57':41,'g51':42,'g52':43,'g63':44,'g69':45,'g70':46,'g64':47,'g11':48,'g12':49,'g5':50,'g6':51,'g23':52,'g24':53,'g17':54,'g18':55,'g35':56,'g36':57,'g29':58,'g30':59,'g47':60,'g48':61,'g41':62,'g42':63,'g59':64,'g60':65,'g53':66,'g54':67,'g71':68,'g72':69,'g65':70,'g66':71};
-  allMatches.sort((a,b) => (ORDEN_CRONO[a.id]??999) - (ORDEN_CRONO[b.id]??999));
+  allMatches.sort((a,b) => {
+    const da = new Date((a.fecha||'9999-12-31') + 'T' + (a.hora||'00') + ':00');
+    const db2 = new Date((b.fecha||'9999-12-31') + 'T' + (b.hora||'00') + ':00');
+    return da - db2;
+  });
 
   let html = `<div style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto" onclick="if(event.target===this)this.remove()">
     <div style="background:#fff;border-radius:16px;width:100%;max-width:480px;padding:1.25rem;margin:auto">
@@ -1093,7 +1095,7 @@ function renderProdeInto(container) {
           <div class="match-team-row"><span class="team-flag">${m.fa}</span><span class="team-name">${m.away}</span></div>
         </div>
         <div class="score-col">
-          ${(locked||res!==undefined) && !isAdmin
+          ${locked||res!==undefined
             ? `<div style="font-size:17px;font-weight:700;color:#111;text-align:center">${pk.h!==''?pk.h:'—'}</div>
                <div style="font-size:17px;font-weight:700;color:#111;text-align:center;border-top:1px solid #f3f4f6;padding-top:4px">${pk.a!==''?pk.a:'—'}</div>`
             : `<input type="number" min="0" max="20" value="${pk.h}" id="h_${m.id}" inputmode="numeric" style="width:40px;height:34px;text-align:center;font-size:16px;font-weight:700;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit;margin-bottom:4px">
@@ -1105,7 +1107,7 @@ function renderProdeInto(container) {
     </div>`;
   });
 
-  const anyUnlocked = isAdmin || allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
+  const anyUnlocked = allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
   if(anyUnlocked) {
     html += `<button class="save-btn" onclick="savePicksDB()">Guardar pronósticos</button>
     <div class="save-ok" id="save-ok">✓ Pronósticos guardados</div>`;
@@ -1130,7 +1132,7 @@ function renderRankingInto(container) {
   <div class="divider"></div>
   <div class="rank-table">
     <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
-      <span>#</span><span>Apodo</span><span>Acer-<br>tados</span><span>Exac-<br>tos</span><span>Erra-<br>dos</span><span>Efec-<br>tividad</span><span>Pts</span>
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span>
     </div>`;
 
   if(scores.length === 0) {
@@ -1381,7 +1383,6 @@ window.togglePicksVisibles = async () => {
   DB.picksVisibles = !DB.picksVisibles;
   const dataToSave = {abierto: DB.registroAbierto, pronosticos: DB.pronosticosAbiertos, picksVisibles: DB.picksVisibles, usuariosHabilitados: DB.usuariosHabilitados};
   await fbSet('regconfig', dataToSave);
-  alert('picksVisibles guardado: ' + DB.picksVisibles);
   renderAdmin();
 };
 
