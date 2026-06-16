@@ -761,7 +761,7 @@ function renderRanking() {
       DB.usuariosHabilitados = regconfig.usuariosHabilitados || {};
     }
     _doRenderRanking(el);
-  }).catch(e => { alert('error: '+e); _doRenderRanking(el); });
+  }).catch(e => { _doRenderRanking(el); });
 }
 
 function _doRenderRanking(el) {
