@@ -1108,7 +1108,6 @@ function renderProdeInto(container) {
     </div>`;
   });
 
-  const isAdmin = DB.users[S.cur]?.isAdmin || false;
   const anyUnlocked = isAdmin || allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
   if(anyUnlocked) {
     html += `<button class="save-btn" onclick="savePicksDB()">Guardar pronósticos</button>
