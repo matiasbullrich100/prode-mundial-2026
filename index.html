@@ -1052,6 +1052,7 @@ function renderProdeInto(container) {
   const div = document.createElement('div');
   container.appendChild(div);
   const picks = DB.picks[S.cur] || {};
+  const isAdmin = DB.users[S.cur]?.isAdmin || false;
   const ORDEN_CRONO = {'g1':0,'g2':1,'g7':2,'g19':3,'g8':4,'g13':5,'g14':6,'g20':7,'g25':8,'g31':9,'g26':10,'g32':11,'g43':12,'g37':13,'g44':14,'g38':15,'g56':16,'g49':17,'g50':18,'g55':19,'g61':20,'g67':21,'g68':22,'g62':23,'g3':24,'g9':25,'g10':26,'g4':27,'g22':28,'g21':29,'g15':30,'g16':31,'g34':32,'g33':33,'g27':34,'g28':35,'g45':36,'g39':37,'g46':38,'g40':39,'g58':40,'g57':41,'g51':42,'g52':43,'g63':44,'g69':45,'g70':46,'g64':47,'g11':48,'g12':49,'g5':50,'g6':51,'g23':52,'g24':53,'g17':54,'g18':55,'g35':56,'g36':57,'g29':58,'g30':59,'g47':60,'g48':61,'g41':62,'g42':63,'g59':64,'g60':65,'g53':66,'g54':67,'g71':68,'g72':69,'g65':70,'g66':71};
   const allMatches = [];
   PHASES.forEach(ph => {
@@ -1095,7 +1096,7 @@ function renderProdeInto(container) {
           <div class="match-team-row"><span class="team-flag">${m.fa}</span><span class="team-name">${m.away}</span></div>
         </div>
         <div class="score-col">
-          ${locked||res!==undefined
+          ${!isAdmin && (locked||res!==undefined)
             ? `<div style="font-size:17px;font-weight:700;color:#111;text-align:center">${pk.h!==''?pk.h:'—'}</div>
                <div style="font-size:17px;font-weight:700;color:#111;text-align:center;border-top:1px solid #f3f4f6;padding-top:4px">${pk.a!==''?pk.a:'—'}</div>`
             : `<input type="number" min="0" max="20" value="${pk.h}" id="h_${m.id}" inputmode="numeric" style="width:40px;height:34px;text-align:center;font-size:16px;font-weight:700;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit;margin-bottom:4px">
@@ -1107,7 +1108,8 @@ function renderProdeInto(container) {
     </div>`;
   });
 
-  const anyUnlocked = allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
+  const isAdmin = DB.users[S.cur]?.isAdmin || false;
+  const anyUnlocked = isAdmin || allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
   if(anyUnlocked) {
     html += `<button class="save-btn" onclick="savePicksDB()">Guardar pronósticos</button>
     <div class="save-ok" id="save-ok">✓ Pronósticos guardados</div>`;
