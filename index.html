@@ -1093,7 +1093,7 @@ function renderProdeInto(container) {
           <div class="match-team-row"><span class="team-flag">${m.fa}</span><span class="team-name">${m.away}</span></div>
         </div>
         <div class="score-col">
-          ${locked||res!==undefined
+          ${(locked||res!==undefined) && !isAdmin
             ? `<div style="font-size:17px;font-weight:700;color:#111;text-align:center">${pk.h!==''?pk.h:'—'}</div>
                <div style="font-size:17px;font-weight:700;color:#111;text-align:center;border-top:1px solid #f3f4f6;padding-top:4px">${pk.a!==''?pk.a:'—'}</div>`
             : `<input type="number" min="0" max="20" value="${pk.h}" id="h_${m.id}" inputmode="numeric" style="width:40px;height:34px;text-align:center;font-size:16px;font-weight:700;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;font-family:inherit;margin-bottom:4px">
@@ -1105,7 +1105,7 @@ function renderProdeInto(container) {
     </div>`;
   });
 
-  const anyUnlocked = allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
+  const anyUnlocked = isAdmin || allMatches.some(m => !m.phaseLocked && m.results[m.id] === undefined);
   if(anyUnlocked) {
     html += `<button class="save-btn" onclick="savePicksDB()">Guardar pronósticos</button>
     <div class="save-ok" id="save-ok">✓ Pronósticos guardados</div>`;
