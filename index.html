@@ -552,6 +552,7 @@ window.doLogin = async () => {
   if(!DB.users[email]) { showErr('No existe cuenta con ese email.'); return; }
   if(DB.users[email].pin !== p) { showErr('PIN incorrecto.'); return; }
   S.cur = email;
+  try { localStorage.setItem('prode_saved_email', email); } catch(e) {}
   showSplash(DB.users[email].isAdmin ? 'admin' : 'main');
 };
 
@@ -577,7 +578,7 @@ window.doRegister = async () => {
   }, 300);
 };
 
-window.doLogout = () => { S.cur = null; showScreen('login'); };
+window.doLogout = () => { S.cur = null; try { localStorage.removeItem('prode_saved_email'); } catch(e) {} showScreen('login'); };
 
 window.closeWelcome = () => {
   const m = document.getElementById('welcome-modal');
@@ -1573,6 +1574,14 @@ updateCountdown();
       </div>
     </div>
   </div>`;
+  // Auto-login: si hay email guardado y existe en la DB, entrar sin PIN
+  try {
+    const savedEmail = localStorage.getItem('prode_saved_email');
+    if (savedEmail && DB.users[savedEmail]) {
+      S.cur = savedEmail;
+      showSplash(DB.users[savedEmail].isAdmin ? 'admin' : 'main');
+    }
+  } catch(e) {}
 })();
 </script>
 
