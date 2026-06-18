@@ -1585,6 +1585,37 @@ updateCountdown();
 })();
 </script>
 
+  <!-- Audio Muchachos -->
+<audio id="bg-audio" loop preload="auto">
+  <source src="https://raw.githubusercontent.com/matiasbullrich100/prode-mundial-2026/main/Muchachos.mp3" type="audio/mpeg">
+</audio>
+<button id="audio-btn" onclick="toggleAudio()" title="Música" style="position:fixed;bottom:80px;right:16px;z-index:9998;width:46px;height:46px;border-radius:50%;background:#001a4d;border:none;color:#d4af37;font-size:22px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">🔇</button>
+<script>
+  const audio = document.getElementById('bg-audio');
+  const btn = document.getElementById('audio-btn');
+  let playing = false;
+
+  function toggleAudio() {
+    if (playing) {
+      audio.pause();
+      btn.textContent = '🔇';
+    } else {
+      audio.play().catch(()=>{});
+      btn.textContent = '🎵';
+    }
+    playing = !playing;
+  }
+
+  document.addEventListener('click', function startOnce() {
+    if (!playing) {
+      audio.play().then(() => {
+        playing = true;
+        btn.textContent = '🎵';
+      }).catch(() => {});
+    }
+    document.removeEventListener('click', startOnce);
+  }, { once: true });
+</script>
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init("fz_gr0jPO4zITXe3B");</script>
