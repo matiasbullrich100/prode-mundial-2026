@@ -512,6 +512,8 @@ async function loadDB() {
   const config = await fbGet('config');
   const paid = await fbGet('paid');
   const regconfig = await fbGet('regconfig');
+  const rankSnapshot = await fbGet('rankSnapshot');
+  DB.prevRankPositions = rankSnapshot?.data || {};
   DB.users = users?.data || {};
   DB.picks = picks?.data || {};
   DB.results = results?.data || {};
@@ -648,6 +650,34 @@ function calcPts(pk, res) {
   const ph=parseInt(pk.h), pa=parseInt(pk.a), rh=parseInt(res.h), ra=parseInt(res.a);
   const pw=ph>pa?'H':ph<pa?'A':'D', rw=rh>ra?'H':rh<ra?'A':'D';
   let pts=0; if(pw===rw) pts+=2; if(ph===rh && pa===ra) pts+=2; return pts;
+}
+
+function rankChangeHTML(email, currentPos) {
+  const prevPositions = DB.prevRankPositions || {};
+  const prevPos = prevPositions[email];
+  if (prevPos === undefined || prevPos === null) {
+    return '<span style="color:#9ca3af;font-size:11px">—</span>';
+  }
+  const diff = prevPos - currentPos; // positivo = subió posiciones
+  if (diff > 0) {
+    return `<span style="color:#16a34a;font-weight:700;font-size:12px">▲ ${diff}</span>`;
+  } else if (diff < 0) {
+    return `<span style="color:#dc2626;font-weight:700;font-size:12px">▼ ${Math.abs(diff)}</span>`;
+  } else {
+    return `<span style="color:#111;font-weight:600;font-size:12px">= 0</span>`;
+  }
+}
+
+function getRankPositions(results) {
+  // Calcula el ranking de posiciones (email -> posicion) usando un set de resultados dado
+  const origResults = DB.results;
+  DB.results = results || {};
+  const users = Object.entries(DB.users);
+  const scores = users.map(([email,u])=>({nick:u.nick,email,...userScore(email)})).sort((a,b)=>b.total-a.total||b.exact-a.exact);
+  DB.results = origResults;
+  const positions = {};
+  scores.forEach((s,i) => { positions[s.email] = i+1; });
+  return positions;
 }
 
 function userScore(email) {
@@ -822,8 +852,8 @@ function _doRenderRanking(el) {
   </div>
   <div class="divider"></div>
   <div class="rank-table">
-    <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span>
+    <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px 40px">
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span><span>Var.</span>
     </div>`;
 
   if(scores.length===0) {
@@ -838,7 +868,7 @@ function _doRenderRanking(el) {
       const nickStyle = (DB.picksVisibles || isAdmin) && !isMe ? 'cursor:pointer;text-decoration:underline;text-decoration-style:dotted' : '';
       const nickClick = (DB.picksVisibles || isAdmin) && !isMe ? `onclick="verPicksUsuario('${s.email}')"` : '';
       const verBtn = (DB.picksVisibles || isAdmin) && !isMe ? `<button onclick="verPicksUsuario('${s.email}')" style="background:none;border:1px solid #d1d5db;border-radius:6px;font-size:11px;padding:2px 7px;cursor:pointer;color:#001a4d;font-family:inherit;margin-left:4px">👁</button>` : '';
-      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
+      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px 40px">
         <div class="${posClass}">${medal}</div>
         <div class="rnick" title="${s.email}" ${nickClick} style="${nickStyle}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}${verBtn}</div>
         <div class="rval">${s.winner}</div>
@@ -846,6 +876,7 @@ function _doRenderRanking(el) {
         <div class="rval" style="color:#dc2626">${s.errados}</div>
         <div class="rval" style="color:#0369a1">${s.efectividad}%</div>
         <div class="rval pts">${s.total}</div>
+        <div class="rval">${rankChangeHTML(s.email, i+1)}</div>
       </div>`;
     });
   }
@@ -1173,8 +1204,8 @@ function renderRankingInto(container) {
   </div>
   <div class="divider"></div>
   <div class="rank-table">
-    <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
-      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span>
+    <div class="rank-header" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px 40px">
+      <span>#</span><span>Apodo</span><span>Acert.</span><span>Exactos</span><span>Errados</span><span>Efect.</span><span>Pts</span><span>Var.</span>
     </div>`;
 
   if(scores.length === 0) {
@@ -1187,7 +1218,7 @@ function renderRankingInto(container) {
       const paid = (DB.paid||{})[s.email];
       const paidIcon = paid ? '<span style="color:#16a34a;font-size:16px">✅</span>' : '<span style="color:#d1d5db;font-size:14px">—</span>';
       const verBtn = !isMe ? `<button onclick="verPicksUsuario('${s.email}')" style="background:none;border:1px solid #d1d5db;border-radius:6px;font-size:11px;padding:2px 7px;cursor:pointer;color:#001a4d;font-family:inherit;margin-left:4px">👁</button>` : '';
-      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px">
+      html += `<div class="rank-row${isMe?' me':''}" style="grid-template-columns:28px 1fr 36px 44px 44px 48px 44px 40px">
         <div class="${posClass}">${medal}</div>
         <div class="rnick" title="${s.email}">${s.nick}${isMe?'<span class="ryou">(vos)</span>':''}${verBtn}</div>
         <div class="rval">${s.winner}</div>
@@ -1195,6 +1226,7 @@ function renderRankingInto(container) {
         <div class="rval" style="color:#dc2626">${s.errados}</div>
         <div class="rval" style="color:#0369a1">${s.efectividad}%</div>
         <div class="rval pts">${s.total}</div>
+        <div class="rval">${rankChangeHTML(s.email, i+1)}</div>
       </div>`;
     });
   }
@@ -1397,6 +1429,10 @@ function renderAdminResults(el) {
 }
 
 window.saveAllResults = async () => {
+  // Guardamos snapshot del ranking ANTES de aplicar los nuevos resultados,
+  // para poder calcular cuántas posiciones subió/bajó cada uno.
+  const prevPositions = getRankPositions(DB.results);
+
   PHASES.forEach(ph => {
     if(!DB.results[ph.id]) DB.results[ph.id] = {};
     (DB.fixture[ph.id]||[]).forEach(m => {
@@ -1405,6 +1441,8 @@ window.saveAllResults = async () => {
     });
   });
   await saveResults();
+  DB.prevRankPositions = prevPositions;
+  await fbSet('rankSnapshot', {data: prevPositions, updatedAt: Date.now()});
   alert('Resultados guardados ✓');
   renderAdmin();
 };
