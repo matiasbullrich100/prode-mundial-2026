@@ -1666,29 +1666,6 @@ updateCountdown();
     }
   }
 
-  // Intentar autoplay apenas carga (puede funcionar en algunos contextos)
-  window.addEventListener('load', function() {
-    audio.play().then(() => {
-      playing = true;
-      btn.textContent = '🎵';
-    }).catch(() => {
-      // El navegador bloqueó el autoplay, esperamos la primera interacción
-      const startOnce = function() {
-        if (!playing) {
-          audio.play().then(() => {
-            playing = true;
-            btn.textContent = '🎵';
-          }).catch(() => {});
-        }
-        ['pointerdown','touchstart','click','keydown'].forEach(e =>
-          document.removeEventListener(e, startOnce)
-        );
-      };
-      ['pointerdown','touchstart','click','keydown'].forEach(e =>
-        document.addEventListener(e, startOnce, { once: true })
-      );
-    });
-  });
 </script>
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
