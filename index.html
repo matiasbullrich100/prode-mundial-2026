@@ -1440,18 +1440,33 @@ function renderAdminResults(el) {
 window.saveAllResults = async () => {
   // Guardamos snapshot del ranking ANTES de aplicar los nuevos resultados,
   // para poder calcular cuántas posiciones subió/bajó cada uno.
-  const prevPositions = getRankPositions(DB.results);
+  // Traemos el estado de resultados YA GUARDADO en Firebase (no el local, que puede
+  // tener cambios pendientes de un guardado anterior en esta misma jornada) para
+  // detectar si este guardado realmente agrega partidos nuevos.
+  const resultsRemote = await fbGet('results');
+  const resultsBefore = resultsRemote?.data || {};
+  const prevPositions = getRankPositions(resultsBefore);
 
+  let hayPartidoNuevo = false;
   PHASES.forEach(ph => {
     if(!DB.results[ph.id]) DB.results[ph.id] = {};
     (DB.fixture[ph.id]||[]).forEach(m => {
       const h = document.getElementById('rh_'+m.id), a = document.getElementById('ra_'+m.id);
-      if(h && a && h.value!=='' && a.value!=='') DB.results[ph.id][m.id] = {h:parseInt(h.value), a:parseInt(a.value)};
+      if(h && a && h.value!=='' && a.value!=='') {
+        const yaEstaba = resultsBefore[ph.id] && resultsBefore[ph.id][m.id];
+        if(!yaEstaba) hayPartidoNuevo = true;
+        DB.results[ph.id][m.id] = {h:parseInt(h.value), a:parseInt(a.value)};
+      }
     });
   });
   await saveResults();
-  DB.prevRankPositions = prevPositions;
-  await fbSet('rankSnapshot', {data: prevPositions, updatedAt: Date.now()});
+  // Solo actualizamos la "foto" de referencia del ranking si este guardado
+  // sumó al menos un resultado nuevo. Si el admin re-guarda sin cambios
+  // (por ejemplo, vuelve a entrar a la pantalla), no pisamos la referencia.
+  if(hayPartidoNuevo) {
+    DB.prevRankPositions = prevPositions;
+    await fbSet('rankSnapshot', {data: prevPositions, updatedAt: Date.now()});
+  }
   alert('Resultados guardados ✓');
   renderAdmin();
 };
