@@ -784,9 +784,7 @@ function isLocked15MinBefore(m) {
   const fifteenMinBefore = matchUtc - 15*60*1000;
   return new Date().getTime() >= fifteenMinBefore;
 }
-  const d = new Date(ph.start + 'T02:59:59Z');
-  return new Date() > d;
-}
+
 
 function renderProde() {
   const el = document.getElementById('tab-prode');
