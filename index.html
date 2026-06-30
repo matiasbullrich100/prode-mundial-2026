@@ -783,7 +783,7 @@ function renderProde() {
   PHASES.forEach(ph => {
     const matches = DB.fixture[ph.id] || [];
     const results = DB.results[ph.id] || {};
-    const phaseLocked = deadlinePassed(ph.id);
+    const phaseLocked = deadlinePassed(ph.id) || (ph.id === 'octavos' && Object.keys(results).length > 0);
     matches.forEach(m => allMatches.push({...m, phaseId: ph.id, results, phaseLocked}));
   });
   // Primero los jugados (con resultado), luego los no jugados, ambos en orden cronológico real
