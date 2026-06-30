@@ -831,7 +831,7 @@ function renderProde() {
       <div class="match-teams">
         <div><div class="team-flag">${m.fh}</div><div class="team-name">${m.home}</div></div>
         <div class="vs-col">
-          ${m.phaseId !== 'octavos' && (phaseLocked || res !== undefined)
+${phaseLocked || res !== undefined
             ? `<div class="static-score">${pk.h!=='' ? pk.h+'-'+pk.a : '—'}</div>`
             : `<div class="score-row">
                 <input type="number" min="0" max="20" value="${pk.h}" id="h_${m.id}" inputmode="numeric">
