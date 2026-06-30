@@ -762,13 +762,28 @@ window.mainTab = (t) => {
 function deadlinePassed(pid) {
   const ph = PHASES.find(p=>p.id===pid); if(!ph) return false;
   if(pid === 'grupos') {
-    // If admin manually opened pronosticos, always allow
     if(DB.pronosticosAbiertos) return false;
-    // If this specific user is individually enabled
     if(DB.usuariosHabilitados && DB.usuariosHabilitados[S.cur]) return false;
     const d = new Date('2026-06-11T15:00:00Z');
     return new Date() > d;
   }
+  const d = new Date(ph.start + 'T02:59:59Z');
+  return new Date() > d;
+}
+
+function isLocked15MinBefore(m) {
+  if(!m.fecha || !m.hora) return false;
+  const monthMap = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
+  const dateMatch = m.fecha.match(/(\\d+)\\s+(\\w+)/);
+  if(!dateMatch) return false;
+  const day = parseInt(dateMatch[1]);
+  const monthStr = dateMatch[2].toLowerCase().substring(0,3);
+  const month = monthMap[monthStr];
+  const [h,mi] = m.hora.split(':').map(Number);
+  const matchUtc = new Date(2026, month, day, h, mi).getTime() - 3*60*60*1000;
+  const fifteenMinBefore = matchUtc - 15*60*1000;
+  return new Date().getTime() >= fifteenMinBefore;
+}
   const d = new Date(ph.start + 'T02:59:59Z');
   return new Date() > d;
 }
@@ -799,7 +814,7 @@ function renderProde() {
   allMatches.forEach(m => {
     const pk = picks[m.id] || {h:'',a:''};
     const res = m.results[m.id];
-    const phaseLocked = m.phaseLocked;
+    let phaseLocked = m.phaseLocked; if(m.phaseId === 'octavos' && !res) phaseLocked = phaseLocked || isLocked15MinBefore(m);
     let ptsBadge = '';
     if(res !== undefined && pk.h !== '') {
       const pts = calcPts(pk, res);
